@@ -1,0 +1,1 @@
+Hold wheel: change mode | Twist wheel: zoom | Bottom slider: rewind time | Right slider: zoom | Click the planet: follow them
