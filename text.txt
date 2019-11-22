@@ -37,7 +37,7 @@ def run_game():
 
     clock = pg.time.Clock()
 
-    print('Screen size: ' + str(width) + '; ' + str(height))
+    print('Screen size: ' + str(width) + 'x' + str(height))
 
     screen = pg.display.set_mode((width,
                                     height), DOUBLEBUF | FULLSCREEN)
@@ -317,10 +317,8 @@ class Dot():
         if self.dot_speed_whole <= 0:
             self.dot_speed_whole = 1
 
-        self.speed_x = abs(settings.black_hole_following - 1)\
-                                    * self.proj_dot_rad_x/self.dot_speed_whole
-        self.speed_y = abs(settings.black_hole_following - 1)\
-                                    * self.proj_dot_rad_y/self.dot_speed_whole
+        self.speed_x = self.proj_dot_rad_x/self.dot_speed_whole
+        self.speed_y = self.proj_dot_rad_y/self.dot_speed_whole
 
         self.move_koef = True
 
@@ -442,7 +440,6 @@ class Dot():
 
     """"""
     def update(self, settings):
-
         if self.y > settings.screen_height*self.gravity_coef_y:
             self.y_koef = 1
         else:
@@ -487,7 +484,7 @@ class Dot_hole():
         self.step = random.randint(100, 800)
 
 
-
+  
         # self.dot_speed_whole = random.randint(settings.whole_speed_max, settings.whole_speed_min)
 
         self.gravity_coef_x = settings.gravity_point_x / settings.screen_width
@@ -733,7 +730,6 @@ def black_hole_mode(screen, settings):
 
     dark_dot = pg.draw.circle(screen, (0,0,0), (settings.gravity_point_x,
                                                 settings.gravity_point_y), 10)
-
     # Я знаю, тебе страшно это читать
     # Прорисовка всех звезд
     update_dot(screen, settings)
@@ -910,9 +906,6 @@ def change_gravity(screen, settings, x, y):
         i.gravity_coef_x = settings.gravity_point_x / settings.screen_width
         i.gravity_coef_y = settings.gravity_point_y / settings.screen_height
 
-        i.gravity_coef_x = settings.gravity_point_x / settings.screen_width
-        i.gravity_coef_y = settings.gravity_point_y / settings.screen_height
-
         i.del_x = settings.screen_width*i.gravity_coef_x
         i.del_y = settings.screen_height*i.gravity_coef_y
     # Перезапуск движения
@@ -1005,16 +998,28 @@ def update_planets_size(screen, settings, check = 10):
 """Попытка сделать движущуюся черную дыру (отключено)"""
 def dark_hole_mooving(screen, settings):
 
-    settings.hole_x += settings.x_speed * 0.5 * settings.speed_hole_koef
-    settings.hole_y += settings.y_speed * 0.5 * settings.speed_hole_koef
+    settings.hole_x += settings.x_speed * 0.8 * settings.speed_hole_koef
+    settings.hole_y += settings.y_speed * 0.8 * settings.speed_hole_koef
+
+    if settings.hole_x > settings.screen_width: settings.hole_x = 0
+    elif settings.hole_x < 0: settings.hole_x = settings.screen_width
+
+    if settings.hole_y > settings.screen_height: settings.hole_y = 0
+    elif settings.hole_y < 0: settings.hole_y = settings.screen_height
 
     x = settings.hole_x
     y = settings.hole_y
 
+    settings.change_speed_counter += 1
+
+    if settings.change_speed_counter == -100:
+        settings.x_speed = random.randint(-10, 10) / 10
+        settings.y_speed = random.randint(-10, 10) / 10
+
+        settings.change_speed_counter = 0
+
     settings.gravity_point_x += int(x)
     settings.gravity_point_y += int(y)
-
-
 
     settings.staying_dots.clear()
     change_gravity(screen, settings, x, y)
@@ -2031,7 +2036,7 @@ class Settings():
         """BLACK HOLE SETTINGS"""
         self.tors_allowed = True
         self.hint = False
-
+  
         self.hint_alpha = 0
         self.text_alpha = 0
 
@@ -2184,8 +2189,10 @@ class Settings():
         for k in range(len(self.max_size_koef_arr)):
             self.max_size_koef_arr[k] /= 2
 
-        self.x_speed = 1
+        self.x_speed = 0.3
         self.y_speed = 0
+
+        self.change_speed_counter = 0
 
         self.hole_x = self.screen_width // 2
         self.hole_y = self.screen_height // 2

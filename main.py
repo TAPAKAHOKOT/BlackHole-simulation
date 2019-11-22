@@ -12,6 +12,8 @@ from pygame.locals import *
 time.perf_counter()
 
 """Main игровая функция"""
+
+
 def run_game():
     flags = FULLSCREEN | DOUBLEBUF
 
@@ -28,8 +30,8 @@ def run_game():
 
     # Узнаем параметры окна пк
     infoObject = pg.display.Info()
-    pg.font.init() # you have to call this at the start,
-                   # if you want to use t1his module.
+    pg.font.init()  # you have to call this at the start,
+    # if you want to use t1his module.5
 
     # Передача инфы о размерах эрана в настройки
     width = infoObject.current_w
@@ -40,7 +42,7 @@ def run_game():
     print('Screen size: ' + str(width) + 'x' + str(height))
 
     screen = pg.display.set_mode((width,
-                                    height), DOUBLEBUF | FULLSCREEN)
+                                  height), DOUBLEBUF | FULLSCREEN)
     # screen = pg.display.set_mode((width//2, height//2))
     screen.set_alpha(None)
     settings = Settings(width, height)
@@ -72,6 +74,7 @@ def run_game():
         clock.tick(120)
         fu.screen_update(screen, settings, clock)
         fu.check_events(screen, settings)
+
 
 # Запуск main function приложения
 if __name__ == '__main__':

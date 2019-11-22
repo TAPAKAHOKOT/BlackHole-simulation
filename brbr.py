@@ -3,6 +3,7 @@ names_of_files = ['main.py', 'asteroids.py', 'dots.py', 'dot_hole.py',
 
 with open('text.txt', 'w') as txt:
     for name in names_of_files:
+        print("{} is writing".format(name))
         with open(name, 'r', encoding='utf-8') as file:
             for line in file:
                 txt.write(line)
