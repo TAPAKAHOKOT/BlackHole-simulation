@@ -210,8 +210,8 @@ def using_sliders(screen, settings):
 
         settings.slider_x1 = m_pos
 
-    step = (settings.max_size_koef_arr[settings.follow_koef])\
-        / (settings.screen_height // 2.65 - settings.screen_height // 1.5)
+    step = ((settings.max_size_koef_arr[settings.follow_koef])
+            / (settings.screen_height // 2.65 - settings.screen_height // 1.5))
     if settings.size_slider_y_hold:
 
         m_pos = pg.mouse.get_pos()[1]
@@ -221,25 +221,22 @@ def using_sliders(screen, settings):
             m_pos = settings.screen_height // 2.65
 
         settings.size_slider_y = m_pos
-        if settings.size_slider_y >= settings.screen_height // 2.65\
-                and m_pos <= settings.screen_height // 1.5:
 
-            # if settings.screen_height // 1.5 > m_pos > settings.screen_height // 2.65:
-            settings.size_koef =\
-                (m_pos - settings.screen_height // 1.5) * step + 0.015
+        settings.size_koef =\
+            (m_pos - settings.screen_height // 1.5) * step + 0.015
 
-            settings.slider_pos_old = settings.slider_pos_now
-            settings.slider_pos_now = m_pos
+        settings.slider_pos_old = settings.slider_pos_now
+        settings.slider_pos_now = m_pos
 
-            if settings.slider_pos_old > settings.slider_pos_now:
-                for i in settings.obj_dot_hole:
-                    i.zoom_on(settings.size_koef, settings.max_size_koef)
-            elif settings.slider_pos_old < settings.slider_pos_now:
-                for i in settings.obj_dot_hole:
-                    i.zoom_off(settings.size_koef)
+        if settings.slider_pos_old > settings.slider_pos_now:
+            for i in settings.obj_dot_hole:
+                i.zoom_on(settings.size_koef, settings.max_size_koef)
+        elif settings.slider_pos_old < settings.slider_pos_now:
+            for i in settings.obj_dot_hole:
+                i.zoom_off(settings.size_koef)
 
-            update_planets_size(screen, settings)
-            settings.size_slider_y = m_pos
+        update_planets_size(screen, settings)
+        # settings.size_slider_y = m_pos
 
     else:
         settings.size_slider_y = (settings.size_koef +

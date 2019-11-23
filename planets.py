@@ -57,6 +57,12 @@ class Planets():
     """Функция отображения картинок планет"""
 
     def draw_planets(self):
+        if self.settings.size_koef < 0.05:
+            pg.draw.circle(self.screen, (200, 200, 200),
+                           (int(self.x + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef),
+                            int(self.y + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef)),
+                           int((self.settings.planets_rad[self.i] // 2) * self.settings.size_koef))
+
         self.planet = self.screen.blit(self.planet_img, (self.x, self.y))
 
         if self.i in self.settings.salt_info.keys():

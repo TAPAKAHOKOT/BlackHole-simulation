@@ -8,6 +8,7 @@ class Dot_hole():
         self.create_plus = 500
         self.screen = screen
         self.rad = 0
+        self.settings = settings
 
         self.track_size = 20
 
@@ -112,11 +113,6 @@ class Dot_hole():
                 self.arr[k] = self.arr[k + 1]
         self.pos = (int(self.x), int(self.y))
 
-        # if self.y > settings.screen_height*self.gravity_coef_y:
-        #     self.y_koef = 1
-        # else:
-        #     self.y_koef = -1
-
     def zoom_off(self, size_koef):
         if size_koef > 0.015:
             if self.x < self.del_x - 1:
@@ -128,6 +124,19 @@ class Dot_hole():
                 self.y -= self.speed_y
             elif self.y < self.del_y - 1:
                 self.y += self.speed_y
+
+            # p = 1 - round((self.settings.screen_height // 1.5 - self.settings.size_slider_y) /
+            #               abs(self.settings.screen_height // 2.65 - self.settings.screen_height // 1.5), 3)
+            #
+            # distance_x = (self.x - self.settings.screen_width *
+            #               self.gravity_coef_x) * (p ** -1) * (1 - self.step / 100000)
+            #
+            # self.x = self.settings.screen_width // 2 + distance_x * p
+            #
+            # distance_y = (self.y - self.settings.screen_height *
+            #               self.gravity_coef_y) * (p ** -1) * (1 - self.step / 100000)
+            # self.y = self.settings.screen_height // 2 + distance_y * p
+
             self.pos_change()
 
     def zoom_on(self, size_koef, max_size):
