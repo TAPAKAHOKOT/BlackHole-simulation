@@ -158,7 +158,7 @@ class Settings():
 
         self.follow_koef = 0
 
-        self.max_size_koef_arr = [4, 35, 20, 20, 35, 6, 4.4, 10, 10]
+        self.max_size_koef_arr = [4, 90, 40, 40, 70, 10, 10, 20, 20]
 
         for k in range(len(self.max_size_koef_arr)):
             self.max_size_koef_arr[k] /= 2
@@ -219,7 +219,19 @@ class Settings():
         self.update_size_moving = False
         self.max_size_koef = self.max_size_koef_arr[0]
         # plsnets of the sun system settings
-        self.planets_speed = [0, 2, 1.6, 1.25, 1, 0.54, 0.4, 0.29, 0.2]
+        # Sun Mercury Venus Earth Mars Jupyter Saturn Uranus Neptun
+        earth_speed = 1
+        self.planets_speed = [
+            0,  # The Sun
+            365 / 88 * earth_speed,  # Mercury
+            365 / 225 * earth_speed,  # Venus
+            earth_speed,  # Earth
+            365 / 687 * earth_speed,  # Mars
+            earth_speed / 12,  # Jupyter
+            earth_speed / 29,  # Saturn
+            earth_speed / 84,  # Uranus
+            earth_speed / 165  # Neptune
+        ]
         for k in range(len(self.planets_speed)):
             self.planets_speed[k] *= self.speed_of_mooving_koef
         print(self.planets_speed)
@@ -390,12 +402,23 @@ class Settings():
             self.planets_rad[k] *= 2
 
         self.planets_rad = [*map(int, self.planets_rad)]
+
+        for k in range(len(self.planets_img)):
+            self.planets_img[k] = pg.transform.scale(
+                self.planets_img[k],
+                (
+                    int(self.planets_rad[k] * self.max_size_koef_arr[k]),
+                    int(self.planets_rad[k] * self.max_size_koef_arr[k])
+                ))
+
         print(self.planets_rad)
+
         """Asteroids"""
         self.arr_astro = []
-        self.astro_num = 200
+        self.astro_num = 300
 
         self.astro_img = pg.image.load("img/meteor.png").convert_alpha()
+        # self.astro_img = pg.transform.scale(self.astro_img, (3, 3))
 
         """Satellite"""
         self.salt_info =\
@@ -429,7 +452,7 @@ class Settings():
 
         """Jupyter"""
         """IO"""
-        self.salt_info[5]["speed"].append(17.334 / 13.07)
+        self.salt_info[5]["speed"].append(17.334 / 13.07 * 12)
         self.salt_info[5]["a"].append(d_s)
         self.salt_info[5]["b"].append(d_s)
         self.salt_info[5]["rad"].append(self.sun_rad // 108)
@@ -438,7 +461,7 @@ class Settings():
             pg.image.load("img/io.jpg").convert_alpha())
 
         """Europ"""
-        self.salt_info[5]["speed"].append(13.74 / 13.07)
+        self.salt_info[5]["speed"].append(13.74 / 13.07 * 12)
         self.salt_info[5]["a"].append(1.5 * d_s)
         self.salt_info[5]["b"].append(1.5 * d_s)
         self.salt_info[5]["rad"].append(self.sun_rad // 55)
@@ -447,7 +470,7 @@ class Settings():
             pg.image.load("img/europ.jpg").convert_alpha())
 
         """Ganimed"""
-        self.salt_info[5]["speed"].append(10.88 / 13.07)
+        self.salt_info[5]["speed"].append(10.88 / 13.07 * 12)
         self.salt_info[5]["a"].append(2.5 * d_s)
         self.salt_info[5]["b"].append(2.5 * d_s)
         self.salt_info[5]["rad"].append(self.sun_rad // 74)
@@ -456,7 +479,7 @@ class Settings():
             pg.image.load("img/ganimed.jpg").convert_alpha())
 
         """Kallisto"""
-        self.salt_info[5]["speed"].append(8.2 / 13.07)
+        self.salt_info[5]["speed"].append(8.2 / 13.07 * 12)
         self.salt_info[5]["a"].append(4.75 * d_s)
         self.salt_info[5]["b"].append(4.75 * d_s)
         self.salt_info[5]["rad"].append(self.sun_rad // 81)
@@ -466,7 +489,7 @@ class Settings():
 
         """Saturn"""
         """Japet"""
-        self.salt_info[6]["speed"].append(2.9 / 9.69)
+        self.salt_info[6]["speed"].append(2.9 / 9.69 * 29)
         self.salt_info[6]["a"].append(8.75 * d_s)
         self.salt_info[6]["b"].append(8.75 * d_s)
         self.salt_info[6]["rad"].append(self.sun_rad // 260)
@@ -475,7 +498,7 @@ class Settings():
             pg.image.load("img/japet.png").convert_alpha())
 
         """Rea"""
-        self.salt_info[6]["speed"].append(6.75 / 9.69)
+        self.salt_info[6]["speed"].append(6.75 / 9.69 * 29)
         self.salt_info[6]["a"].append(1.3 * d_s)
         self.salt_info[6]["b"].append(1.3 * d_s)
         self.salt_info[6]["rad"].append(self.sun_rad // 75)
@@ -484,7 +507,7 @@ class Settings():
             pg.image.load("img/rea.jpg").convert_alpha())
 
         """Titan"""
-        self.salt_info[6]["speed"].append(1.6 / 9.69)
+        self.salt_info[6]["speed"].append(1.6 / 9.69 * 29)
         self.salt_info[6]["a"].append(3 * d_s)
         self.salt_info[6]["b"].append(3 * d_s)
         self.salt_info[6]["rad"].append(self.sun_rad // 74)
@@ -494,7 +517,7 @@ class Settings():
 
         """Uranus"""
         """Titania"""
-        self.salt_info[7]["speed"].append(3.3 / 6.8)
+        self.salt_info[7]["speed"].append(3.3 / 6.8 * 84)
         self.salt_info[7]["a"].append(d_s)
         self.salt_info[7]["b"].append(d_s)
         self.salt_info[7]["rad"].append(self.sun_rad // 250)
@@ -503,7 +526,7 @@ class Settings():
             pg.image.load("img/titania.png").convert_alpha())
 
         """Oberton"""
-        self.salt_info[7]["speed"].append(2 / 6.8)
+        self.salt_info[7]["speed"].append(2 / 6.8 * 84)
         self.salt_info[7]["a"].append(1.45 * d_s)
         self.salt_info[7]["b"].append(1.45 * d_s)
         self.salt_info[7]["rad"].append(self.sun_rad // 260)
@@ -513,10 +536,12 @@ class Settings():
 
         """Neptune"""
         """Triron"""
-        self.salt_info[8]["speed"].append(4.7 / 5.5)
+        self.salt_info[8]["speed"].append(4.7 / 5.5 * 165)
         self.salt_info[8]["a"].append(1.45 * d_s)
         self.salt_info[8]["b"].append(1.45 * d_s)
         self.salt_info[8]["rad"].append(self.sun_rad // 152)
         self.salt_info[8]["pos"].append(random.randint(0, 1000))
         self.salt_info[8]["img"].append(
             pg.image.load("img/triton.png").convert_alpha())
+
+        print(self.planets_speed)

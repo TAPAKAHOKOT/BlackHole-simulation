@@ -400,32 +400,34 @@ def update_planets_size(screen, settings, check=10):
 
     if not settings.red_border:
         for i in settings.arr_astro:
-            index = settings.arr_astro.index(i)
+            if i.rect.clip(settings.screen_rect):
+                index = settings.arr_astro.index(i)
 
-            if settings.size_koef < 0.07:
-                i.img = pg.transform.scale(settings.astro_img, (3, 3))
-            elif settings.size_koef < 0.2:
-                i.img = pg.transform.scale(settings.astro_img, (4, 4))
-            else:
-                i.img = pg.transform.scale(settings.astro_img, (6, 6))
+                if settings.size_koef < 0.07:
+                    i.img = pg.transform.scale(settings.astro_img, (3, 3))
+                elif settings.size_koef < 0.2:
+                    i.img = pg.transform.scale(settings.astro_img, (4, 4))
+                else:
+                    i.img = pg.transform.scale(settings.astro_img, (6, 6))
 
         for i in settings.object_planets:
-            index = settings.object_planets.index(i)
+            if i.shadow.clip(settings.screen_rect):
+                index = settings.object_planets.index(i)
 
-            if int(settings.planets_rad[index] * settings.size_koef) > 1:
-                if i.shadow.clip(settings.screen_rect)\
-                        or check == index or check == 'all':
+                if int(settings.planets_rad[index] * settings.size_koef) > 1:
+                    if i.shadow.clip(settings.screen_rect)\
+                            or check == index or check == 'all':
 
-                    i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                      (int(settings.planets_rad[index] * settings.size_koef),
-                                                       int(settings.planets_rad[index] * settings.size_koef)))
+                        i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                          (int(settings.planets_rad[index] * settings.size_koef),
+                                                           int(settings.planets_rad[index] * settings.size_koef)))
+                    else:
+                        i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                          (int(settings.planets_rad[index] * 0.001),
+                                                           int(settings.planets_rad[index] * 0.001)))
                 else:
                     i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                      (int(settings.planets_rad[index] * 0.001),
-                                                       int(settings.planets_rad[index] * 0.001)))
-            else:
-                i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                  (2, 2))
+                                                      (2, 2))
 
 
 """Попытка сделать движущуюся черную дыру (отключено)"""
@@ -499,7 +501,9 @@ def update_planets_cors(screen, settings):
 
         i.update()
         if not settings.red_border:
-            i.draw()
+            if i.rect.clip(settings.screen_rect):
+                i.draw()
+
         else:
             i.draw_shadow()
 
@@ -1070,11 +1074,11 @@ def check_mouse_events(screen, settings, event):
                 settings.size_koef = 0.015
 
             update_planets_size(screen, settings)
-            settings.new_x_for_planets =\
-                settings.object_planets[settings.follow_koef].x
-            settings.new_y_for_planets =\
-                settings.object_planets[settings.follow_koef].y
-            update_planets_cors(screen, settings)
+            # settings.new_x_for_planets =\
+            #     settings.object_planets[settings.follow_koef].x
+            # settings.new_y_for_planets =\
+            #     settings.object_planets[settings.follow_koef].y
+            # update_planets_cors(screen, settings)
 
     """Нажатие на колесико мыши"""
     if event.button == 2:
