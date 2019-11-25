@@ -125,12 +125,14 @@ class Dot_hole():
             elif self.y < self.del_y - 1:
                 self.y += self.speed_y
 
-            # p = 1 - round((self.settings.screen_height // 1.5 - self.settings.size_slider_y) /
-            #               abs(self.settings.screen_height // 2.65 - self.settings.screen_height // 1.5), 3)
-            #
-            # distance_x = (self.x - self.settings.screen_width *
-            #               self.gravity_coef_x) * (p ** -1) * (1 - self.step / 100000)
-            #
+            # p = round((self.settings.screen_height // 1.5 - self.settings.size_slider_y) /
+            #           abs(self.settings.screen_height // 2.65 - self.settings.screen_height // 1.5), 3)
+            # #
+            # distance_x = (self.x - self.settings.screen_width // 2) / \
+            #     (self.settings.screen_height // 1.5 - self.settings.size_slider_y) * \
+            #     abs(self.settings.screen_height // 2.65 -
+            #         self.settings.screen_height // 1.5)
+            # #
             # self.x = self.settings.screen_width // 2 + distance_x * p
             #
             # distance_y = (self.y - self.settings.screen_height *

@@ -118,7 +118,7 @@ def black_hole_mode(screen, settings):
     # Создание формы центра черной дыры
 
     dark_dot = pg.draw.circle(screen, (0, 0, 0), (settings.gravity_point_x,
-                                                  settings.gravity_point_y), 10)
+                                                  settings.gravity_point_y), 30)
     # Я знаю, тебе страшно это читать
     # Прорисовка всех звезд
     update_dot(screen, settings)
@@ -417,17 +417,19 @@ def update_planets_size(screen, settings, check=10):
                 if int(settings.planets_rad[index] * settings.size_koef) > 1:
                     if i.shadow.clip(settings.screen_rect)\
                             or check == index or check == 'all':
-
-                        i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                          (int(settings.planets_rad[index] * settings.size_koef),
-                                                           int(settings.planets_rad[index] * settings.size_koef)))
+                        try:
+                            i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                              (int(settings.planets_rad[index] * settings.size_koef),
+                                                               int(settings.planets_rad[index] * settings.size_koef)))
+                        except:
+                            pass
                     else:
                         i.planet_img = pg.transform.scale(settings.planets_img[index],
                                                           (int(settings.planets_rad[index] * 0.001),
                                                            int(settings.planets_rad[index] * 0.001)))
                 else:
                     i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                      (2, 2))
+                                                      (1, 1))
 
 
 """Попытка сделать движущуюся черную дыру (отключено)"""
@@ -438,15 +440,11 @@ def dark_hole_mooving(screen, settings):
     settings.hole_x += settings.x_speed * 0.8 * settings.speed_hole_koef
     settings.hole_y += settings.y_speed * 0.8 * settings.speed_hole_koef
 
-    if settings.hole_x > settings.screen_width:
-        settings.hole_x = 0
-    elif settings.hole_x < 0:
-        settings.hole_x = settings.screen_width
+    if settings.hole_x > settings.screen_width - 30 or settings.hole_x < 30:
+        settings.x_speed *= -1
 
-    if settings.hole_y > settings.screen_height:
-        settings.hole_y = 0
-    elif settings.hole_y < 0:
-        settings.hole_y = settings.screen_height
+    if settings.hole_y > settings.screen_height - 30 or settings.hole_y < 30:
+        settings.y_speed *= -1
 
     x = settings.hole_x
     y = settings.hole_y
@@ -464,7 +462,7 @@ def dark_hole_mooving(screen, settings):
 
     settings.staying_dots.clear()
     change_gravity(screen, settings, x, y)
-    restart_moving(screen, settings)
+    # restart_moving(screen, settings)
 
 
 """Изменение координат точек при планетах"""
@@ -523,16 +521,10 @@ def update_planets_cors(screen, settings):
         if not settings.red_border:
             if settings.size_koef > 1:
                 if i.shadow.clip(settings.screen_rect):
-                    try:
-                        update_planets_size(screen, settings, koef)
-                    except:
-                        None
+                    update_planets_size(screen, settings, koef)
                     i.draw_planets()
             else:
-                try:
-                    update_planets_size(screen, settings, koef)
-                except:
-                    None
+                update_planets_size(screen, settings, koef)
                 i.draw_planets()
 
 
@@ -917,7 +909,7 @@ def check_mouse_events(screen, settings, event):
                     if settings.size_koef > settings.max_size_koef or check == True:
                         settings.size_koef = settings.max_size_koef
 
-                    update_planets_size(screen, settings, settings.follow_koef)
+                    # update_planets_size(screen, settings, settings.follow_koef)
             if settings.slider_x1 - 55 < pg.mouse.get_pos()[0] < settings.slider_x1 + 65\
                     and settings.slider_y1 - 10 < pg.mouse.get_pos()[1] < settings.slider_y1 + 30:
                 settings.slider_hold = True
@@ -932,7 +924,8 @@ def check_mouse_events(screen, settings, event):
                 check = True
             else:
                 check = False
-
+            settings.object_planets[settings.follow_koef].planet_img\
+                = pg.transform.scale(settings.planets_img[settings.follow_koef], (2, 2))
             settings.follow_koef += 1
 
             if settings.follow_koef > 8:
@@ -944,7 +937,7 @@ def check_mouse_events(screen, settings, event):
             if settings.size_koef > settings.max_size_koef or check == True:
                 settings.size_koef = settings.max_size_koef
 
-            update_planets_size(screen, settings, settings.follow_koef)
+            # update_planets_size(screen, settings, settings.follow_koef)
 
         elif settings.click != -1:
 
@@ -1035,15 +1028,26 @@ def check_mouse_events(screen, settings, event):
     if event.button == 5:
         if settings.sun_system_koef == 1:
             if settings.speed_hole_koef != 0.01:
-                settings.max_speed = 10000
-                settings.min_speed = 100000
+                # settings.max_speed = 10000
+                # settings.min_speed = 100000
+                #
+                # settings.speed_hole_koef = 0.01
+                #
+                # settings.tors_speed_koef = 200000
+                #
+                # settings.whole_speed_max = 5000
+                # settings.whole_speed_min = 500000000
+                # restart_moving(screen, settings)
 
-                settings.speed_hole_koef = 0.01
+                settings.max_speed = 100
+                settings.min_speed = 5000
 
-                settings.tors_speed_koef = 200000
+                settings.speed_hole_koef = 0.1
 
-                settings.whole_speed_max = 5000
-                settings.whole_speed_min = 500000000
+                settings.tors_speed_koef = 10000
+
+                settings.whole_speed_max = 100
+                settings.whole_speed_min = 1000
                 restart_moving(screen, settings)
 
         else:
@@ -1073,7 +1077,7 @@ def check_mouse_events(screen, settings, event):
             if settings.size_koef - 0.015 <= 0:
                 settings.size_koef = 0.015
 
-            update_planets_size(screen, settings)
+            # update_planets_size(screen, settings)
             # settings.new_x_for_planets =\
             #     settings.object_planets[settings.follow_koef].x
             # settings.new_y_for_planets =\
@@ -1253,6 +1257,10 @@ def check_events(screen, settings):
                 else:
                     check = False
 
+                def u_s_p(settings_frame):
+                    settings.object_planets[settings.follow_koef].planet_img\
+                        = pg.transform.scale(settings.planets_img[settings.follow_koef], (2, 2))
+
                 if event.key == pg.K_0:
                     # settings.zoom_speed = 0.05
                     # settings.size_bool = True
@@ -1261,39 +1269,47 @@ def check_events(screen, settings):
                     # settings.max_size_koef = 6
 
                 elif event.key == pg.K_1:
+                    u_s_p(settings)
                     settings.follow_koef = 1
 
                 elif event.key == pg.K_2:
+                    u_s_p(settings)
                     settings.follow_koef = 2
 
                 elif event.key == pg.K_3:
+                    u_s_p(settings)
                     settings.follow_koef = 3
 
                 elif event.key == pg.K_4:
+                    u_s_p(settings)
                     settings.follow_koef = 4
 
                 elif event.key == pg.K_5:
+                    u_s_p(settings)
                     settings.follow_koef = 5
 
                 elif event.key == pg.K_6:
+                    u_s_p(settings)
                     settings.follow_koef = 6
 
                 elif event.key == pg.K_7:
+                    u_s_p(settings)
                     settings.follow_koef = 7
 
                 elif event.key == pg.K_8:
+                    u_s_p(settings)
                     settings.follow_koef = 8
 
                 settings.max_size_koef =\
                     settings.max_size_koef_arr[settings.follow_koef]
                 # settings.size_num = settings.max_size_koef_arr[settings.follow_koef]
 
-                update_planets_size(screen, settings, settings.follow_koef)
+                # update_planets_size(screen, settings, settings.follow_koef)
 
                 if settings.size_koef > settings.max_size_koef or check == True:
                     settings.size_koef = settings.max_size_koef
 
-                    update_planets_size(screen, settings, settings.follow_koef)
+                    # update_planets_size(screen, settings, settings.follow_koef)
 
                 keys = pg.key.get_pressed()
 
@@ -1301,11 +1317,11 @@ def check_events(screen, settings):
                         and keys[pg.K_LALT]:
                     if settings.red_border:
                         settings.red_border = False
-                        update_planets_size(screen, settings, 'all')
+                        # update_planets_size(screen, settings, 'all')
 
                     else:
                         settings.red_border = True
-                        update_planets_size(screen, settings, 'all')
+                        # update_planets_size(screen, settings, 'all')
 
             """Проверка для выхода из проги"""
             if event.key == pg.K_ESCAPE:

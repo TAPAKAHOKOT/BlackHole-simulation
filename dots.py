@@ -124,11 +124,10 @@ class Dot():
                                                    (0, 0, 0), self.arr[k], 1)
 
     def moving(self, settings, speed, mooving_arround_speed=2):
-
         self.dot_speed_whole -= speed
 
         if self.y >= settings.gravity_point_y:
-            self.tilt = m.acos(self.proj_2_dot_x / (self.radius_dot_dist + 0.01))\
+            self.tilt = m.acos(self.proj_2_dot_x / (self.radius_dot_dist))\
                 - m.radians(self.tors_speed * mooving_arround_speed)
 
             self.y_2 = self.radius_dot_dist * m.sin(self.tilt)
@@ -146,7 +145,7 @@ class Dot():
 
         self.dot_speed_whole = round(self.dot_speed_whole, 10)
 
-        if self.dot_speed_whole <= 0:
+        if self.dot_speed_whole <= 1:
             self.dot_speed_whole = 1
 
         self.speed_x = self.proj_dot_rad_x / self.dot_speed_whole
@@ -156,8 +155,7 @@ class Dot():
 
     def change_speed(self, settings):
 
-        if self.radius_dot_dist < self.whole_rad // 6\
-                and self.radius_dot_dist >= self.whole_rad // 8:
+        if self.whole_rad // 8 <= self.radius_dot_dist < self.whole_rad // 6:
             self.m_x = self.m_y = 0.003
         else:
             self.m_x = self.m_y = 1
@@ -206,8 +204,7 @@ class Dot():
             self.speed_x = 0
             self.speed_y = 0
 
-        elif self.radius_dot_dist < self.whole_rad // 0.8\
-                and self.radius_dot_dist >= self.whole_rad // 0.9:
+        elif self.whole_rad // 0.9 <= self.radius_dot_dist < self.whole_rad // 0.8:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.25)
 
@@ -217,8 +214,7 @@ class Dot():
             self.speed_x = 0
             self.speed_y = 0
 
-        elif self.radius_dot_dist < self.whole_rad // 0.9\
-                and self.radius_dot_dist >= self.whole_rad:
+        elif self.whole_rad <= self.radius_dot_dist < self.whole_rad // 0.9:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.5)
             else:
@@ -227,8 +223,7 @@ class Dot():
             self.speed_x = 0
             self.speed_y = 0
 
-        elif self.radius_dot_dist < self.whole_rad\
-                and self.radius_dot_dist >= self.whole_rad // 1.5:
+        elif self.whole_rad // 1.5 <= self.radius_dot_dist < self.whole_rad:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 1)
             else:
@@ -237,24 +232,20 @@ class Dot():
             # self.speed_x = 0
             # self.speed_y = 0
 
-        elif self.radius_dot_dist < self.whole_rad // 1.5\
-                and self.radius_dot_dist >= self.whole_rad // 2:
+        elif self.whole_rad // 2 <= self.radius_dot_dist < self.whole_rad // 1.5:
             self.moving(settings, 1)
 
-        elif self.radius_dot_dist < self.whole_rad // 2\
-                and self.radius_dot_dist >= self.whole_rad // 3.5:
+        elif self.whole_rad // 3.5 <= self.radius_dot_dist < self.whole_rad // 2:
             self.moving(settings, 1)
 
-        elif self.radius_dot_dist < self.whole_rad // 3.5\
-                and self.radius_dot_dist >= self.whole_rad // 6:
+        elif self.whole_rad // 6 <= self.radius_dot_dist < self.whole_rad // 3.5:
             self.moving(settings, 3, 5)
 
-        elif self.radius_dot_dist < self.whole_rad // 6\
-                and self.radius_dot_dist >= self.whole_rad // 8:
+        elif self.whole_rad // 8 <= self.radius_dot_dist < self.whole_rad // 6:
             self.moving(settings, 3, 10)
 
         elif self.radius_dot_dist < self.whole_rad // 8:
-            self.moving(settings, 1)
+            self.moving(settings, 10)
 
         else:
             self.move_koef = False
@@ -283,6 +274,7 @@ class Dot():
     def check(self, settings):
         for k in range(self.tors_size):
             if k == self.tors_size - 1:
+
                 self.arr[k] = self.pos
             else:
                 self.arr[k] = self.arr[k + 1]
@@ -290,7 +282,7 @@ class Dot():
     """"""
 
     def update(self, settings):
-        if self.y > settings.screen_height * self.gravity_coef_y:
+        if self.y >= settings.screen_height * self.gravity_coef_y:
             self.y_koef = 1
         else:
             self.y_koef = -1
@@ -299,14 +291,14 @@ class Dot():
         sp_x = self.speed_x * self.m_x
         sp_y = self.speed_y * self.m_y
 
-        if self.x <= self.del_x:
+        if self.x < self.del_x - 1:
             self.x += sp_x
-        elif self.x > self.del_x:
+        elif self.x > self.del_x + 1:
             self.x -= sp_x
 
-        if self.y >= self.del_y:
+        if self.y > self.del_y + 1:
             self.y -= sp_y
-        elif self.y < self.del_y:
+        elif self.y < self.del_y - 1:
             self.y += sp_y
 
         self.check(settings)

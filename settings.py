@@ -164,7 +164,7 @@ class Settings():
             self.max_size_koef_arr[k] /= 2
 
         self.x_speed = 0.3
-        self.y_speed = 0
+        self.y_speed = 0.3
 
         self.change_speed_counter = 0
 

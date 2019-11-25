@@ -54,6 +54,11 @@ class Planets():
             self.salt_pos = self.salt_info["pos"]
             self.salt_img = self.salt_info["img"]
 
+        self.shadow = pg.Rect(self.x, self.y,
+                              self.settings.planets_rad[self.i] *
+                              self.settings.size_koef * 3,
+                              self.settings.planets_rad[self.i] * self.settings.size_koef * 3)
+
     """Функция отображения картинок планет"""
 
     def draw_planets(self):
@@ -103,10 +108,14 @@ class Planets():
     def draw_planets_rect(self):
         border_color = (255 * self.settings.red_border, 0, 0)
 
-        self.shadow = pg.draw.rect(self.screen, border_color, [self.x, self.y,
-                                                               self.settings.planets_rad[self.i] *
-                                                               self.settings.size_koef,
-                                                               self.settings.planets_rad[self.i] * self.settings.size_koef], 1)
+        # self.shadow = pg.draw.rect(self.screen, border_color, [self.x, self.y,
+        #                                                        self.settings.planets_rad[self.i] *
+        #                                                        self.settings.size_koef,
+        #                                                        self.settings.planets_rad[self.i] * self.settings.size_koef], 1)
+        self.shadow = pg.Rect(self.x, self.y,
+                              self.settings.planets_rad[self.i] *
+                              self.settings.size_koef * 3,
+                              self.settings.planets_rad[self.i] * self.settings.size_koef * 3)
         self.dot_color = 150
 
         for k in range(10):

@@ -1,5 +1,5 @@
 names_of_files = ['main.py', 'asteroids.py', 'dots.py', 'dot_hole.py',
-    'functions.py', 'planets.py', 'settings.py']
+                  'functions.py', 'planets.py', 'settings.py']
 
 with open('text.txt', 'w') as txt:
     for name in names_of_files:
