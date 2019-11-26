@@ -35,7 +35,7 @@ class Dot():
 
         self.dark_whole = settings.dark_whole_index
 
-        if self.dot_in_middle_chanse == 5:
+        if self.dot_in_middle_chanse >= 7:
             self.x = random.randint(settings.screen_width // 4,
                                     settings.screen_width // 4 * 3)
             self.y = random.randint(settings.screen_height // 4,
@@ -72,6 +72,8 @@ class Dot():
         self.x_int = int(self.x)
         self.y_int = int(self.y)
 
+        self.tors_intensive = 1
+
         self.pos = self.x_int, self.y_int
 
         if self.dark_whole == 1:
@@ -101,7 +103,8 @@ class Dot():
 
         settings.staying_dots.append(self.staying_arg)
 
-        self.tors_size = 15
+        self.tors_size = 20
+        self.tors_max = 100
         self.arr = []
 
         for k in range(self.tors_size):
@@ -111,17 +114,20 @@ class Dot():
             self.arr[k] = self.pos
 
     def draw_dot(self):
-        self.rect = pg.draw.circle(self.screen, self.color, self.pos, self.rad)
 
         # if self.last_pos != self.pos:
         if self.move_koef:
             for k in range(self.tors_size):
-                if k != 0:
-                    self.all_dots = pg.draw.circle(self.screen,
-                                                   self.color, self.arr[k], 0)
-                else:
-                    self.last_dot = pg.draw.circle(self.screen,
-                                                   (0, 0, 0), self.arr[k], 1)
+                # if k >= self.tors_max:
+                #     break
+                if k % self.tors_intensive == 0:
+                    if k != 0:
+                        self.all_dots = pg.draw.circle(self.screen,
+                                                       self.color, self.arr[k], 0)
+                    else:
+                        self.last_dot = pg.draw.circle(self.screen,
+                                                       (0, 0, 0), self.arr[k], 1)
+        self.rect = pg.draw.circle(self.screen, self.color, self.pos, self.rad)
 
     def moving(self, settings, speed, mooving_arround_speed=2):
         self.dot_speed_whole -= speed
@@ -170,6 +176,8 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_max = 0
+            # self.tors_intensive = 3
 
         elif self.radius_dot_dist < self.whole_rad // 0.5\
                 and self.radius_dot_dist >= self.whole_rad // 0.6:
@@ -181,6 +189,8 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_max = 45
+            # self.tors_intensive = 1
 
         elif self.radius_dot_dist < self.whole_rad // 0.6\
                 and self.radius_dot_dist >= self.whole_rad // 0.7:
@@ -192,6 +202,7 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_intensive = 2
 
         elif self.radius_dot_dist < self.whole_rad // 0.7\
                 and self.radius_dot_dist >= self.whole_rad // 0.8:
@@ -203,6 +214,7 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_intensive = 2
 
         elif self.whole_rad // 0.9 <= self.radius_dot_dist < self.whole_rad // 0.8:
             if not settings.black_hole_following:
@@ -213,6 +225,7 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_intensive = 3
 
         elif self.whole_rad <= self.radius_dot_dist < self.whole_rad // 0.9:
             if not settings.black_hole_following:
@@ -222,6 +235,8 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_size = 15
+            # self.tors_intensive = 1
 
         elif self.whole_rad // 1.5 <= self.radius_dot_dist < self.whole_rad:
             if not settings.black_hole_following:
@@ -274,7 +289,6 @@ class Dot():
     def check(self, settings):
         for k in range(self.tors_size):
             if k == self.tors_size - 1:
-
                 self.arr[k] = self.pos
             else:
                 self.arr[k] = self.arr[k + 1]

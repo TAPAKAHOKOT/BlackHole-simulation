@@ -53,7 +53,7 @@ def run_game():
     settings.myfont = pg.font.SysFont(settings.font, 18)
 
     settings.hint_title = pg.font.SysFont(settings.font, 24)
-    settings.hint_myfont = pg.font.SysFont(settings.font, 18)
+    settings.hint_myfont = pg.font.SysFont(settings.font, 14)
 
     # screen = pg.display.set_mode(resolution, flags, bpp)
 
@@ -64,14 +64,15 @@ def run_game():
     fu.astro_init(screen, settings)
 
     # Создание переменной с информацией о размерах экрана
-    settings.screen_rect = screen.get_rect()
+    settings.screen_rect = pg.Rect(-100, -100, width + 200, height + 200)
+    print(settings.screen_rect)
 
     # Прорисовка всех точке
     list(map(lambda i: i.draw_dot(), settings.object_dot))
 
     """Main цикл программы"""
     while True:
-        clock.tick(120)
+        clock.tick(60)
         fu.screen_update(screen, settings, clock)
         fu.check_events(screen, settings)
 

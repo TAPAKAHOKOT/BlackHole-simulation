@@ -23,19 +23,7 @@ def screen_update(screen, settings, clock):
 
     # dark_hole_mooving(screen, settings)
 
-    # if time.perf_counter() - settings.time_1 >= 1:
-    #     settings.time_1 = time.perf_counter()-0.5
-    #     settings.fps /= 2
-
-    # settings.fps += 1
-    #
-    # fps_num = round(settings.fps/(time.perf_counter() - settings.time_1))
-
     settings.fps = round(clock.get_fps())
-
-    text_title = settings.hint_myfont.render(str(settings.fps),
-                                             True, (255, 255, 255))
-    screen.blit(text_title, (10, settings.screen_height - 30))
 
     if settings.click == 1:
         """Запускается, если режим черной дыры"""
@@ -47,6 +35,9 @@ def screen_update(screen, settings, clock):
         solar_system_mode(screen, settings)
 
     draw_hint(screen, settings)
+    text_title = settings.hint_myfont.render(str(settings.fps),
+                                             True, (255, 255, 255))
+    screen.blit(text_title, (10, settings.screen_height - 30))
 
     # Включение/отключение поля с текстом по мере приближения и отдаления
     if settings.size_koef >= settings.max_size_koef_arr[settings.follow_koef] / 1.1:
@@ -98,18 +89,6 @@ def solar_system_mode(screen, settings):
 
 
 def black_hole_mode(screen, settings):
-    if settings.settings_frame:
-        if settings.set_alpha < 200:
-            settings.set_alpha += 4
-        create_settings_frame(screen, settings)
-    else:
-        if settings.set_alpha > 0:
-            settings.set_alpha -= 4
-            create_settings_frame(screen, settings)
-
-    settings.settings_img = settings.settings_img.convert()
-    settings.settings_img.set_alpha(120)
-    screen.blit(settings.settings_img, (settings.screen_width - 30, 10))
 
     ar = random.randint(0, settings.dot_num - 1)
     p = settings.object_dot[ar]
@@ -142,6 +121,19 @@ def black_hole_mode(screen, settings):
     # white_dot = pg.draw.circle(screen, (249,239,221), (settings.gravity_point_x, settings.gravity_point_y), 12)
     dark_dot = pg.draw.circle(screen, (0, 0, 0),
                               (settings.gravity_point_x, settings.gravity_point_y), 30)
+
+    if settings.settings_frame:
+        if settings.set_alpha < 200:
+            settings.set_alpha += 4
+        create_settings_frame(screen, settings)
+    else:
+        if settings.set_alpha > 0:
+            settings.set_alpha -= 4
+            create_settings_frame(screen, settings)
+
+    settings.settings_img = settings.settings_img.convert()
+    settings.settings_img.set_alpha(120)
+    screen.blit(settings.settings_img, (settings.screen_width - 30, 10))
 
 
 """Рисует подсказки управления"""
@@ -282,7 +274,7 @@ def update_dot(screen, settings):
 
 
 def update_dot_hole(screen, settings):
-    list(map(lambda i: i.update(), settings.obj_dot_hole))
+    map(lambda i: i.update(), settings.obj_dot_hole)
 
 
 """Создание всех планет"""
@@ -403,33 +395,52 @@ def update_planets_size(screen, settings, check=10):
             if i.rect.clip(settings.screen_rect):
                 index = settings.arr_astro.index(i)
 
-                if settings.size_koef < 0.07:
-                    i.img = pg.transform.scale(settings.astro_img, (3, 3))
-                elif settings.size_koef < 0.2:
-                    i.img = pg.transform.scale(settings.astro_img, (4, 4))
-                else:
-                    i.img = pg.transform.scale(settings.astro_img, (6, 6))
+                # if settings.size_koef < 0.07:
+                #     i.img = pg.transform.scale(settings.astro_img, (3, 3))
+                # elif settings.size_koef < 0.2:
+                #     i.img = pg.transform.scale(settings.astro_img, (4, 4))
+                # else:
+                #     i.img = pg.transform.scale(settings.astro_img, (6, 6))
 
         for i in settings.object_planets:
             if i.shadow.clip(settings.screen_rect):
                 index = settings.object_planets.index(i)
 
-                if int(settings.planets_rad[index] * settings.size_koef) > 1:
-                    if i.shadow.clip(settings.screen_rect)\
-                            or check == index or check == 'all':
-                        try:
+                if settings.size_koef > 6 and settings.follow_koef in [1, 2]:
+                    if index != 0:
+                        if int(settings.planets_rad[index] * settings.size_koef) > 0.5:
+                            if i.shadow.clip(settings.screen_rect) or check == index or check == 'all':
+                                try:
+                                    s = int(
+                                        settings.planets_rad[index] * settings.size_koef)
+                                    i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                                      (s if s >= 2 else 2,
+                                                                       s if s >= 2 else 2))
+                                except:
+                                    pass
+                            else:
+                                i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                                  (2, 2))
+                        else:
                             i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                              (int(settings.planets_rad[index] * settings.size_koef),
-                                                               int(settings.planets_rad[index] * settings.size_koef)))
-                        except:
-                            pass
+                                                              (2, 2))
+                else:
+                    if int(settings.planets_rad[index] * settings.size_koef) > 0.5:
+                        if i.shadow.clip(settings.screen_rect) or check == index or check == 'all':
+                            try:
+                                s = int(
+                                    settings.planets_rad[index] * settings.size_koef)
+                                i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                                  (s if s >= 2 else 2,
+                                                                   s if s >= 2 else 2))
+                            except:
+                                pass
+                        else:
+                            i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                              (2, 2))
                     else:
                         i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                          (int(settings.planets_rad[index] * 0.001),
-                                                           int(settings.planets_rad[index] * 0.001)))
-                else:
-                    i.planet_img = pg.transform.scale(settings.planets_img[index],
-                                                      (1, 1))
+                                                          (2, 2))
 
 
 """Попытка сделать движущуюся черную дыру (отключено)"""
@@ -520,9 +531,11 @@ def update_planets_cors(screen, settings):
         i.draw_planets_rect()
         if not settings.red_border:
             if settings.size_koef > 1:
+
                 if i.shadow.clip(settings.screen_rect):
                     update_planets_size(screen, settings, koef)
                     i.draw_planets()
+
             else:
                 update_planets_size(screen, settings, koef)
                 i.draw_planets()
@@ -744,8 +757,9 @@ def create_settings_frame(screen, settings):
     screen.blit(left_surf, left_frame)
 
     text_title = settings.hint_myfont.render(settings.all_text[settings.lang_txt_change][3],
-                                             False, (0, 0, 0))
-    screen.blit(text_title, (settings.screen_width - 245, 0))
+                                             False, (120, 240, 120))
+    text_title.set_alpha(settings.set_alpha)
+    screen.blit(text_title, (settings.screen_width - 165, 0))
 
     arr = ['250', '500', '1000']
     y = 200
@@ -760,9 +774,9 @@ def create_settings_frame(screen, settings):
                 settings.heights[k] -= 1
 
         if settings.settings_chosen == k:
-            color = (240, 240, 240)
+            color = (100, 240, 100)
         else:
-            color = (0, 0, 0)
+            color = (0, 100, 0)
 
         text_title = settings.hint_title.render(arr[k], False, color)
         text_title.set_alpha(settings.set_alpha)
@@ -1136,49 +1150,35 @@ def check_events(screen, settings):
             width = settings.screen_width
             height = settings.screen_height
 
-            if pg.mouse.get_pos()[0] > width - 60\
-                    and pg.mouse.get_pos()[0] < width - 30\
-                    and pg.mouse.get_pos()[1] > height - 35\
-                    and pg.mouse.get_pos()[1] < height:
+            if width - 60 < pg.mouse.get_pos()[0] < width - 30\
+                    and height - 35 < pg.mouse.get_pos()[1] < height:
                 settings.lang_hover_on = 0
-            elif pg.mouse.get_pos()[0] > width - 30\
-                    and pg.mouse.get_pos()[0] < width\
-                    and pg.mouse.get_pos()[1] > height - 35\
-                    and pg.mouse.get_pos()[1] < height:
+            elif width - 30 < pg.mouse.get_pos()[0] < width\
+                    and height - 35 < pg.mouse.get_pos()[1] < height:
                 settings.lang_hover_on = 1
             else:
                 settings.lang_hover_on = 2
 
-            if pg.mouse.get_pos()[0] > settings.screen_width - 200\
-                    and pg.mouse.get_pos()[0] < settings.screen_width - 170\
-                    and pg.mouse.get_pos()[1] < 50 \
-                    and pg.mouse.get_pos()[1] > 30:
+            if settings.screen_width - 215 < pg.mouse.get_pos()[0] <= settings.screen_width - 155\
+                    and 30 < pg.mouse.get_pos()[1] < 50:
                 settings.hover_on = 0
 
-            elif pg.mouse.get_pos()[0] > settings.screen_width - 140\
-                    and pg.mouse.get_pos()[0] < settings.screen_width - 110\
-                    and pg.mouse.get_pos()[1] < 50\
-                    and pg.mouse.get_pos()[1] > 30:
+            elif settings.screen_width - 155 < pg.mouse.get_pos()[0] <= settings.screen_width - 95\
+                    and 30 < pg.mouse.get_pos()[1] < 50:
                 settings.hover_on = 1
 
-            elif pg.mouse.get_pos()[0] > settings.screen_width - 80\
-                    and pg.mouse.get_pos()[0] < settings.screen_width - 40\
-                    and pg.mouse.get_pos()[1] < 50\
-                    and pg.mouse.get_pos()[1] > 30:
+            elif settings.screen_width - 95 < pg.mouse.get_pos()[0] <= settings.screen_width - 25\
+                    and 30 < pg.mouse.get_pos()[1] < 50:
                 settings.hover_on = 2
             else:
                 settings.hover_on = -1
 
-            if pg.mouse.get_pos()[0] > settings.screen_width - 35\
-                    and pg.mouse.get_pos()[0] < settings.screen_width - 5\
-                    and pg.mouse.get_pos()[1] < 35 \
-                    and pg.mouse.get_pos()[1] > 5:
+            if settings.screen_width - 35 < pg.mouse.get_pos()[0] < settings.screen_width - 5\
+                    and 5 < pg.mouse.get_pos()[1] < 35:
                 settings.settings_frame = True
             elif settings.settings_frame == True\
-                    and pg.mouse.get_pos()[0] > settings.screen_width - 250\
-                    and pg.mouse.get_pos()[0] < settings.screen_width - 5\
-                    and pg.mouse.get_pos()[1] < 55 \
-                    and pg.mouse.get_pos()[1] > 5:
+                    and settings.screen_width - 250 < pg.mouse.get_pos()[0]\
+                    and pg.mouse.get_pos()[1] < 55:
                 settings.settings_frame = True
             else:
                 settings.settings_frame = False
@@ -1302,14 +1302,14 @@ def check_events(screen, settings):
 
                 settings.max_size_koef =\
                     settings.max_size_koef_arr[settings.follow_koef]
+
                 # settings.size_num = settings.max_size_koef_arr[settings.follow_koef]
 
                 # update_planets_size(screen, settings, settings.follow_koef)
 
-                if settings.size_koef > settings.max_size_koef or check == True:
+                if settings.size_koef >= settings.max_size_koef or check == True:
                     settings.size_koef = settings.max_size_koef
-
-                    # update_planets_size(screen, settings, settings.follow_koef)
+                # update_planets_size(screen, settings, settings.follow_koef)
 
                 keys = pg.key.get_pressed()
 
