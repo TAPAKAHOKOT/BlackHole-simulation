@@ -485,6 +485,18 @@ class Settings():
         self.salt_info[5]["pos"].append(random.randint(0, 1000))
         self.salt_info[5]["img"].append(
             pg.image.load("img/kallisto.gif").convert_alpha())
+        #
+        # for k in range(75):
+        #     """Kallisto"""
+        #     r = random.randint(20, 50) / 10
+        #     self.salt_info[5]["speed"].append(8.2 / 13.07 * 12)
+        #     self.salt_info[5]["a"].append(r * d_s)
+        #     self.salt_info[5]["b"].append(
+        #         (r + random.randint(1, 5) / 10) * d_s)
+        #     self.salt_info[5]["rad"].append(0)
+        #     self.salt_info[5]["pos"].append(random.randint(0, 1000))
+        #     self.salt_info[5]["img"].append(
+        #         pg.image.load("img/kallisto.gif").convert_alpha())
 
         """Saturn"""
         """Japet"""
@@ -513,6 +525,18 @@ class Settings():
         self.salt_info[6]["pos"].append(random.randint(0, 1000))
         self.salt_info[6]["img"].append(
             pg.image.load("img/titan.png").convert_alpha())
+        #
+        # for k in range(1500):
+        #     """Titan"""
+        #     r = random.randint(25, 100) / 100
+        #     self.salt_info[6]["speed"].append(17 / 9.69 * 29)
+        #     self.salt_info[6]["a"].append(
+        #         (r + random.randint(1, 9) / 10) * d_s)
+        #     self.salt_info[6]["b"].append(r * d_s)
+        #     self.salt_info[6]["rad"].append(0)
+        #     self.salt_info[6]["pos"].append(random.randint(0, 1000))
+        #     self.salt_info[6]["img"].append(
+        #         pg.image.load("img/titan.png").convert_alpha())
 
         """Uranus"""
         """Titania"""

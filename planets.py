@@ -68,8 +68,6 @@ class Planets():
                             int(self.y + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef)),
                            int((self.settings.planets_rad[self.i] // 2) * self.settings.size_koef))
 
-        self.planet = self.screen.blit(self.planet_img, (self.x, self.y))
-
         if self.i in self.settings.salt_info.keys():
             for k in range(len(self.salt_speed)):
                 self.s_a = self.salt_a[k] * self.settings.size_koef
@@ -84,6 +82,7 @@ class Planets():
                                                 self.l * self.salt_speed[k]) + self.x + self.r // 2)
                 self.y_t = int(self.s_b * m.cos(self.v *
                                                 self.l * self.salt_speed[k]) + self.y + self.r // 2)
+
                 self.rad_t = self.salt_rad[k] * self.settings.size_koef
 
                 if self.rad_t < 1:
@@ -92,10 +91,14 @@ class Planets():
                 self.im = pg.transform.scale(
                     self.salt_img[k], (int(self.rad_t * 4), int(self.rad_t * 4)))
 
-                self.screen.blit(self.im, (self.x_t, self.y_t))
-                #
-                # pg.draw.circle(self.screen, (0, 250, 0),
-                #                (self.x_t, self.y_t), int(self.rad_t))
+                if self.salt_rad[k] != 0:
+                    self.screen.blit(self.im, (self.x_t, self.y_t))
+                else:
+                    if self.settings.size_koef > 0.12:
+                        pg.draw.circle(self.screen, (255, 250, 255),
+                                       (self.x_t, self.y_t), 0)
+        self.planet = self.screen.blit(
+            self.planet_img, (self.x, self.y))
 
     # def update_lines(self):
     #     self.line = pg.draw.line(self.screen, (50, 50, 50),

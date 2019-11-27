@@ -84,8 +84,8 @@ class Astro():
         #
         # self.pos = (int(self.x), int(self.y))
         self.astro = self.screen.blit(self.img, self.pos)
-        # self.astro = pg.draw.circle(self.screen, (0, 250, 0),  self.pos,
-        #                             int(self.rad * self.settings.size_koef))
+        # self.astro = pg.draw.circle(
+        #     self.settings.surf, (0, 250, 0),  self.pos, 0)
         #
         # self.rect = pg.draw.rect(self.screen, (0, 250, 0), [self.x, self.y,
         #                                                     self.rad * self.settings.size_koef,
