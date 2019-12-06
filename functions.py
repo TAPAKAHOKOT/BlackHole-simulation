@@ -7,7 +7,7 @@ from dot_hole import Dot_hole
 from planets import Planets
 from asteroids import Astro
 import time
-
+from threading import Thread
 
 """Функция обномления всей информации на экране"""
 
@@ -266,6 +266,7 @@ def dot_hole_init(settings, screen):
 
 
 def update_dot(screen, settings):
+
     if settings.object_dot:
         list(map(lambda i: i.update(settings), settings.object_dot))
 

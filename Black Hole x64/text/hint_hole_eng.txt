@@ -1,1 +1,0 @@
-LKM: move black hole | RKM: update all stars | Wheel up: speed up | Press wheel: normal speed | Wheel down: speed down

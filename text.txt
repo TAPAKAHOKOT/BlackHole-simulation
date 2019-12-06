@@ -12,6 +12,8 @@ from pygame.locals import *
 time.perf_counter()
 
 """Main игровая функция"""
+
+
 def run_game():
     flags = FULLSCREEN | DOUBLEBUF
 
@@ -28,8 +30,8 @@ def run_game():
 
     # Узнаем параметры окна пк
     infoObject = pg.display.Info()
-    pg.font.init() # you have to call this at the start,
-                   # if you want to use t1his module.
+    pg.font.init()  # you have to call this at the start,
+    # if you want to use t1his module.5
 
     # Передача инфы о размерах эрана в настройки
     width = infoObject.current_w
@@ -40,7 +42,7 @@ def run_game():
     print('Screen size: ' + str(width) + 'x' + str(height))
 
     screen = pg.display.set_mode((width,
-                                    height), DOUBLEBUF | FULLSCREEN)
+                                  height), DOUBLEBUF | FULLSCREEN)
     # screen = pg.display.set_mode((width//2, height//2))
     screen.set_alpha(None)
     settings = Settings(width, height)
@@ -51,7 +53,7 @@ def run_game():
     settings.myfont = pg.font.SysFont(settings.font, 18)
 
     settings.hint_title = pg.font.SysFont(settings.font, 24)
-    settings.hint_myfont = pg.font.SysFont(settings.font, 18)
+    settings.hint_myfont = pg.font.SysFont(settings.font, 14)
 
     # screen = pg.display.set_mode(resolution, flags, bpp)
 
@@ -62,16 +64,18 @@ def run_game():
     fu.astro_init(screen, settings)
 
     # Создание переменной с информацией о размерах экрана
-    settings.screen_rect = screen.get_rect()
+    settings.screen_rect = pg.Rect(-100, -100, width + 200, height + 200)
+    print(settings.screen_rect)
 
     # Прорисовка всех точке
     list(map(lambda i: i.draw_dot(), settings.object_dot))
 
     """Main цикл программы"""
     while True:
-        clock.tick(120)
+        clock.tick(60)
         fu.screen_update(screen, settings, clock)
         fu.check_events(screen, settings)
+
 
 # Запуск main function приложения
 if __name__ == '__main__':
@@ -83,6 +87,7 @@ import pygame as pg
 from random import randint
 import math as m
 
+
 class Astro():
     def __init__(self, screen, settings):
         self.screen = screen
@@ -92,33 +97,71 @@ class Astro():
 
         self.rad = randint(14, 40)
 
-        self.img = pg.transform.scale(self.img, (self.rad,self.rad))
+        self.img = pg.transform.scale(
+            self.img, (self.rad // 10, self.rad // 10))
 
         self.x = self.settings.planets_x[0]
+        rn = randint(1, 6)
 
-        self.xxx = randint(self.settings.planets_x[5],
-                                            self.settings.planets_x[6])
-        self.yyy = randint(self.settings.planets_heights[5],
-                                            self.settings.planets_heights[6])
+        if rn in [1, 2, 3]:
+            self.xxx = randint(self.settings.planets_x[5],
+                               int(self.settings.planets_x[6] * 0.85))
+            self.yyy = randint(self.settings.planets_heights[5],
+                               int(self.settings.planets_heights[6] * 0.85))
 
+            self.y = randint(
+                self.settings.planets_y[5], self.settings.planets_y[6])
 
-        self.y = randint(self.settings.planets_y[6], self.settings.planets_y[5])
+            self.t = randint(1, 150)
 
-        self.color = (255,0,0)
+            self.v = randint(int(self.settings.planets_speed[4] * 40),
+                             int(self.settings.planets_speed[4] * 80)) / 100
+        elif rn in [4, 5]:
+
+            self.xxx = randint(int(self.settings.planets_widths[6] * 2 * 0.95),
+                               int(self.settings.planets_widths[6] * 2 * 1.05))
+            self.yyy = randint(
+                int((self.settings.planets_y[6] +
+                     self.settings.planets_heights[6]) * 0.95),
+                int((self.settings.planets_y[6] +
+                     self.settings.planets_heights[6]) * 1.05)
+            )
+
+            self.y = self.settings.planets_y[6]
+            self.v = randint(1256, 1257) / 100000
+
+            if randint(1, 2) == 1:
+                self.t = randint(50, 130)
+            else:
+                self.t = randint(350, 430)
+        else:
+            self.xxx = randint(
+                int((self.settings.planets_x[5] +
+                     self.settings.planets_widths[5])),
+                int((self.settings.planets_x[6] +
+                     self.settings.planets_widths[6])))
+
+            self.yyy = randint(
+                int((self.settings.planets_y[5] +
+                     self.settings.planets_heights[5])),
+                int((self.settings.planets_y[6] +
+                     self.settings.planets_heights[6])))
+
+            self.y = self.settings.planets_y[6]
+            self.v = randint(int(self.settings.planets_speed[4] * 40),
+                             int(self.settings.planets_speed[4] * 80)) / 400
+
+            self.t = randint(0, 460)
+
+        self.color = (255, 0, 0)
 
         self.pos = (self.x, self.y)
 
-        self.v = randint(int(self.settings.planets_speed[4] * 5),
-                                        int(self.settings.planets_speed[4]*7))/4
-
-        self.v /= 10
-
-        self.t = randint(1, 150)
-
+        # self.v = randint(int(self.settings.planets_speed[4] * 40),
+        #                  int(self.settings.planets_speed[4] * 80)) / 100
 
         self.x_0 = self.settings.middle[0]
         self.y_0 = self.settings.middle[1]
-
 
     def draw(self):
         # self.x *= self.settings.size_koef
@@ -126,6 +169,12 @@ class Astro():
         #
         # self.pos = (int(self.x), int(self.y))
         self.astro = self.screen.blit(self.img, self.pos)
+        # self.astro = pg.draw.circle(
+        #     self.settings.surf, (0, 250, 0),  self.pos, 0)
+        #
+        # self.rect = pg.draw.rect(self.screen, (0, 250, 0), [self.x, self.y,
+        #                                                     self.rad * self.settings.size_koef,
+        #                                                     self.rad * self.settings.size_koef], 1)
 
     def draw_shadow(self):
         self.shadow = pg.draw.circle(self.screen, self.color, self.pos, 0)
@@ -135,24 +184,24 @@ class Astro():
         self.a = self.xxx * self.settings.size_koef
         self.b = self.yyy * self.settings.size_koef
 
-
-        self.x_cor = self.a*m.sin(self.v*self.t) + self.x_0
-        self.y_cor = self.b*m.cos(self.v*self.t) + self.y_0
-
+        self.x_cor = self.a * m.sin(self.v * self.t) + self.x_0
+        self.y_cor = self.b * m.cos(self.v * self.t) + self.y_0
 
         try:
             minus = 0.15 / self.v
 
             for k in range(10):
-                self.dot_x_cor = self.a*m.sin(self.v*(self.t-minus)) + self.x_0
-                self.dot_y_cor = self.b*m.cos(self.v*(self.t-minus)) + self.y_0
+                self.dot_x_cor = self.a * \
+                    m.sin(self.v * (self.t - minus)) + self.x_0
+                self.dot_y_cor = self.b * \
+                    m.cos(self.v * (self.t - minus)) + self.y_0
 
                 self.pos_dot = (int(self.dot_x_cor), int(self.dot_y_cor))
 
                 self.arr_dot_pos[k] = self.pos_dot
                 minus += 0.1 / self.v
-        except: None
-
+        except:
+            None
 
         self.t += 0.01
 
@@ -162,6 +211,9 @@ class Astro():
         self.y = int(self.y_cor)
 
         self.pos = (self.x, self.y)
+        self.rect = pg.Rect(self.x, self.y,
+                            self.rad * self.settings.size_koef + 1,
+                            self.rad * self.settings.size_koef + 1)
 
         # self.settings.planets_x_cors[self.i] = self.x
         # self.settings.planets_y_cors[self.i] = self.y
@@ -169,17 +221,22 @@ import pygame as pg
 import random
 import math as m
 
+
 class Dot():
     def __init__(self, settings, screen):
         self.settings = settings
         self.screen = screen
+
+        self.m_y = 1
+        self.m_x = 1
+
         self.rad = random.randint(settings.min_dot_radius,
-                                                    settings.max_dot_radius)
+                                  settings.max_dot_radius)
 
-        self.tors_speed = random.randint(1000 , 5000)/settings.tors_speed_koef
+        self.tors_speed = random.randint(1000, 5000) / settings.tors_speed_koef
 
-        self.dot_pos_num = random.randint(1,4)
-        self.dot_in_middle_chanse = random.randint(1,10)
+        self.dot_pos_num = random.randint(1, 4)
+        self.dot_in_middle_chanse = random.randint(1, 10)
         self.step = random.randint(settings.max_speed, settings.min_speed)
         self.staying = random.randint(1, settings.staying_dots_part)
         self.staying_arg = 0
@@ -187,8 +244,7 @@ class Dot():
         self.move_koef = False
 
         self.dot_speed_whole = random.randint(settings.whole_speed_max,
-                                                    settings.whole_speed_min)
-
+                                              settings.whole_speed_min)
 
         self.gravity_coef_x = settings.gravity_point_x / settings.screen_width
         self.gravity_coef_y = settings.gravity_point_y / settings.screen_height
@@ -198,77 +254,76 @@ class Dot():
 
         self.dark_whole = settings.dark_whole_index
 
-        if self.dot_in_middle_chanse == 5:
-            self.x = random.randint(settings.screen_width//4,
-                                            settings.screen_width//4*3)
-            self.y = random.randint(settings.screen_height//4,
-                                            settings.screen_height//4*3)
+        if self.dot_in_middle_chanse >= 7:
+            self.x = random.randint(settings.screen_width // 4,
+                                    settings.screen_width // 4 * 3)
+            self.y = random.randint(settings.screen_height // 4,
+                                    settings.screen_height // 4 * 3)
 
         elif self.dot_pos_num == 1:
             self.x = random.randint(0, settings.screen_width)
-            self.y = random.randint(0, settings.screen_height//4)
+            self.y = random.randint(0, settings.screen_height // 4)
 
         elif self.dot_pos_num == 2:
-            self.x = random.randint(settings.screen_width//4*3,
-                                            settings.screen_width)
+            self.x = random.randint(settings.screen_width // 4 * 3,
+                                    settings.screen_width)
             self.y = random.randint(0, settings.screen_height)
 
         elif self.dot_pos_num == 3:
             self.x = random.randint(0, settings.screen_width)
-            self.y = random.randint(settings.screen_height//4*3,
-                                            settings.screen_height)
+            self.y = random.randint(settings.screen_height // 4 * 3,
+                                    settings.screen_height)
 
         elif self.dot_pos_num == 4:
-            self.x = random.randint(0, settings.screen_width//4)
+            self.x = random.randint(0, settings.screen_width // 4)
             self.y = random.randint(0, settings.screen_height)
 
         self.proj_dot_x = abs(self.x - settings.gravity_point_x)
         self.proj_dot_y = abs(self.y - settings.gravity_point_y)
 
-
-
         self.color = settings.dots_colors[random.randint(0,
-                                                len(settings.dots_colors) - 1)]
+                                                         len(settings.dots_colors) - 1)]
 
         self.radius_dot_dist = m.sqrt(self.proj_dot_x**2 + self.proj_dot_y**2)
 
-        self.whole_rad = settings.screen_height//settings.screen_part_whole_rad
+        self.whole_rad = settings.screen_height // settings.screen_part_whole_rad
 
         self.x_int = int(self.x)
         self.y_int = int(self.y)
 
-        self.pos = self.x_int, self.y_int
+        self.tors_intensive = 1
 
+        self.pos = self.x_int, self.y_int
 
         if self.dark_whole == 1:
             self.speed_x = 0
             self.speed_y = 0
 
             if self.radius_dot_dist <= settings.screen_height\
-                                                //settings.staying_dots_part:
+                    // settings.staying_dots_part:
                 self.speed_x = abs((self.x -
-                        settings.screen_width*self.gravity_coef_x)/self.step)
+                                    settings.screen_width * self.gravity_coef_x) / self.step)
                 self.speed_y = abs((self.y -
-                        settings.screen_height*self.gravity_coef_y)/self.step)
+                                    settings.screen_height * self.gravity_coef_y) / self.step)
 
         elif self.dark_whole == -1:
             self.speed_x = abs((self.x -
-                        settings.screen_width*self.gravity_coef_x)/self.step)
+                                settings.screen_width * self.gravity_coef_x) / self.step)
             self.speed_y = abs((self.y -
-                        settings.screen_height*self.gravity_coef_y)/self.step)
+                                settings.screen_height * self.gravity_coef_y) / self.step)
 
             if self.staying == 1 and sum(settings.staying_dots)\
-                                < settings.dot_num//settings.staying_dots_part:
+                    < settings.dot_num // settings.staying_dots_part:
 
-                 self.staying_arg = 1
-                 self.speed_x = 0
-                 self.speed_y = 0
-                 self.rad = random.randint(2,4)
-
+                self.staying_arg = 1
+                self.speed_x = 0
+                self.speed_y = 0
+                self.rad = random.randint(2, 4)
 
         settings.staying_dots.append(self.staying_arg)
 
-        self.tors_size = 15
+        self.tors_size = 20
+        self.tors_max = 100
         self.arr = []
 
         for k in range(self.tors_size):
@@ -278,34 +333,35 @@ class Dot():
             self.arr[k] = self.pos
 
     def draw_dot(self):
-        self.rect = pg.draw.circle(self.screen, self.color, self.pos, self.rad)
 
         # if self.last_pos != self.pos:
         if self.move_koef:
             for k in range(self.tors_size):
-                if k != 0:
-                    self.all_dots = pg.draw.circle(self.screen,
-                                                    self.color, self.arr[k], 0)
-                else:
-                    self.last_dot = pg.draw.circle(self.screen,
-                                                    (0, 0, 0), self.arr[k], 1)
+                # if k >= self.tors_max:
+                #     break
+                if k % self.tors_intensive == 0:
+                    if k != 0:
+                        self.all_dots = pg.draw.circle(self.screen,
+                                                       self.color, self.arr[k], 0)
+                    else:
+                        self.last_dot = pg.draw.circle(self.screen,
+                                                       (0, 0, 0), self.arr[k], 1)
+        self.rect = pg.draw.circle(self.screen, self.color, self.pos, self.rad)
 
-
-    def moving(self, settings, speed, mooving_arround_speed = 2):
-
+    def moving(self, settings, speed, mooving_arround_speed=2):
         self.dot_speed_whole -= speed
 
         if self.y >= settings.gravity_point_y:
-            self.tilt = m.acos(self.proj_2_dot_x/self.radius_dot_dist)\
-                        - m.radians(self.tors_speed * mooving_arround_speed)
+            self.tilt = m.acos(self.proj_2_dot_x / (self.radius_dot_dist))\
+                - m.radians(self.tors_speed * mooving_arround_speed)
 
             self.y_2 = self.radius_dot_dist * m.sin(self.tilt)
 
         elif self.y < settings.gravity_point_y:
-            self.tilt = m.acos(self.proj_2_dot_x/self.radius_dot_dist)\
-                        + m.radians(self.tors_speed * mooving_arround_speed)
+            self.tilt = m.acos(self.proj_2_dot_x / self.radius_dot_dist)\
+                + m.radians(self.tors_speed * mooving_arround_speed)
 
-            self.y_2 = self.radius_dot_dist * m.sin(self.tilt)*(-1)
+            self.y_2 = self.radius_dot_dist * m.sin(self.tilt) * (-1)
 
         self.x_2 = self.radius_dot_dist * m.cos(self.tilt)
 
@@ -314,67 +370,83 @@ class Dot():
 
         self.dot_speed_whole = round(self.dot_speed_whole, 10)
 
-        if self.dot_speed_whole <= 0:
+        if self.dot_speed_whole <= 1:
             self.dot_speed_whole = 1
 
-        self.speed_x = self.proj_dot_rad_x/self.dot_speed_whole
-        self.speed_y = self.proj_dot_rad_y/self.dot_speed_whole
+        self.speed_x = self.proj_dot_rad_x / self.dot_speed_whole
+        self.speed_y = self.proj_dot_rad_y / self.dot_speed_whole
 
         self.move_koef = True
 
     def change_speed(self, settings):
-        if self.radius_dot_dist < self.whole_rad//0.5\
-                                and self.radius_dot_dist >= self.whole_rad//0.6:
+
+        if self.whole_rad // 8 <= self.radius_dot_dist < self.whole_rad // 6:
+            self.m_x = self.m_y = 0.003
+        else:
+            self.m_x = self.m_y = 1
+
+        if self.radius_dot_dist < self.whole_rad // 0.5\
+                and self.radius_dot_dist >= self.whole_rad // 0.6:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.002)
 
-            else:   self.moving(settings, 1, 0.04)
+            else:
+                self.moving(settings, 1, 0.04)
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_max = 0
+            # self.tors_intensive = 3
 
-        elif self.radius_dot_dist < self.whole_rad//0.5\
-                                and self.radius_dot_dist >= self.whole_rad//0.6:
+        elif self.radius_dot_dist < self.whole_rad // 0.5\
+                and self.radius_dot_dist >= self.whole_rad // 0.6:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.025)
 
-            else:   self.moving(settings, 1, 0.05)
+            else:
+                self.moving(settings, 1, 0.05)
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_max = 45
+            # self.tors_intensive = 1
 
-        elif self.radius_dot_dist < self.whole_rad//0.6\
-                                and self.radius_dot_dist >= self.whole_rad//0.7:
+        elif self.radius_dot_dist < self.whole_rad // 0.6\
+                and self.radius_dot_dist >= self.whole_rad // 0.7:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.05)
 
-            else:   self.moving(settings, 1, 0.1)
+            else:
+                self.moving(settings, 1, 0.1)
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_intensive = 2
 
-        elif self.radius_dot_dist < self.whole_rad//0.7\
-                                and self.radius_dot_dist >= self.whole_rad//0.8:
+        elif self.radius_dot_dist < self.whole_rad // 0.7\
+                and self.radius_dot_dist >= self.whole_rad // 0.8:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.1)
 
-            else:   self.moving(settings, 1, 0.2)
+            else:
+                self.moving(settings, 1, 0.2)
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_intensive = 2
 
-        elif self.radius_dot_dist < self.whole_rad//0.8\
-                                and self.radius_dot_dist >= self.whole_rad//0.9:
+        elif self.whole_rad // 0.9 <= self.radius_dot_dist < self.whole_rad // 0.8:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.25)
 
-            else:   self.moving(settings, 1, 0.5)
+            else:
+                self.moving(settings, 1, 0.5)
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_intensive = 3
 
-        elif self.radius_dot_dist < self.whole_rad//0.9\
-                                    and self.radius_dot_dist >= self.whole_rad:
+        elif self.whole_rad <= self.radius_dot_dist < self.whole_rad // 0.9:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 0.5)
             else:
@@ -382,10 +454,10 @@ class Dot():
 
             self.speed_x = 0
             self.speed_y = 0
+            # self.tors_size = 15
+            # self.tors_intensive = 1
 
-
-        elif self.radius_dot_dist < self.whole_rad\
-                                and self.radius_dot_dist >= self.whole_rad//1.5:
+        elif self.whole_rad // 1.5 <= self.radius_dot_dist < self.whole_rad:
             if not settings.black_hole_following:
                 self.moving(settings, 1, 1)
             else:
@@ -394,25 +466,26 @@ class Dot():
             # self.speed_x = 0
             # self.speed_y = 0
 
-        elif self.radius_dot_dist < self.whole_rad//1.5\
-                                and self.radius_dot_dist >= self.whole_rad//2:
+        elif self.whole_rad // 2 <= self.radius_dot_dist < self.whole_rad // 1.5:
             self.moving(settings, 1)
 
-        elif self.radius_dot_dist < self.whole_rad//2\
-                                and self.radius_dot_dist >= self.whole_rad//3.5:
+        elif self.whole_rad // 3.5 <= self.radius_dot_dist < self.whole_rad // 2:
             self.moving(settings, 1)
 
-        elif self.radius_dot_dist < self.whole_rad//3.5\
-                                and self.radius_dot_dist >= self.whole_rad//8:
-            self.moving(settings, 3)
+        elif self.whole_rad // 6 <= self.radius_dot_dist < self.whole_rad // 3.5:
+            self.moving(settings, 3, 5)
 
-        elif self.radius_dot_dist < self.whole_rad//8:
-            self.moving(settings, 1)
+        elif self.whole_rad // 8 <= self.radius_dot_dist < self.whole_rad // 6:
+            self.moving(settings, 3, 10)
+
+        elif self.radius_dot_dist < self.whole_rad // 8:
+            self.moving(settings, 10)
 
         else:
             self.move_koef = False
 
     """Функция для изменения координат точек"""
+
     def change_cors(self, settings):
         if self.dark_whole == 1:
             self.proj_dot_x = abs(self.x - settings.gravity_point_x)
@@ -422,41 +495,44 @@ class Dot():
             self.proj_2_dot_y = settings.gravity_point_y - self.y
 
             self.proj_dot_rad_x = abs(self.x -
-                             settings.screen_width*self.gravity_coef_x)
+                                      settings.screen_width * self.gravity_coef_x)
             self.proj_dot_rad_y = abs(self.y -
-                             settings.screen_height*self.gravity_coef_y)
+                                      settings.screen_height * self.gravity_coef_y)
 
-            self.radius_dot_dist = m.sqrt(self.proj_dot_x*self.proj_dot_x +
-                                                self.proj_dot_y*self.proj_dot_y)
+            self.radius_dot_dist = m.sqrt(self.proj_dot_x * self.proj_dot_x +
+                                          self.proj_dot_y * self.proj_dot_y)
             self.change_speed(settings)
 
     """"""
+
     def check(self, settings):
         for k in range(self.tors_size):
-            if k == self.tors_size-1:
+            if k == self.tors_size - 1:
                 self.arr[k] = self.pos
             else:
-                self.arr[k] = self.arr[k+1]
+                self.arr[k] = self.arr[k + 1]
 
     """"""
+
     def update(self, settings):
-        if self.y > settings.screen_height*self.gravity_coef_y:
+        if self.y >= settings.screen_height * self.gravity_coef_y:
             self.y_koef = 1
         else:
             self.y_koef = -1
         self.change_cors(settings)
 
-        if self.x < self.del_x - 1:
-            self.x +=  self.speed_x
-        elif self.x > self.del_x + 1:
-            self.x -= self.speed_x
+        sp_x = self.speed_x * self.m_x
+        sp_y = self.speed_y * self.m_y
 
+        if self.x < self.del_x - 1:
+            self.x += sp_x
+        elif self.x > self.del_x + 1:
+            self.x -= sp_x
 
         if self.y > self.del_y + 1:
-            self.y -= self.speed_y
+            self.y -= sp_y
         elif self.y < self.del_y - 1:
-            self.y += self.speed_y
-
+            self.y += sp_y
 
         self.check(settings)
 
@@ -465,26 +541,26 @@ import pygame as pg
 import random
 import math as m
 
+
 class Dot_hole():
     def __init__(self, settings, screen):
         self.create_plus = 500
         self.screen = screen
         self.rad = 0
+        self.settings = settings
 
         self.track_size = 20
 
-        self.all_track_colors  = []
+        self.all_track_colors = []
 
         self.last_pos = []
 
-        self.tors_speed = random.randint(1000 , 5000)/settings.tors_speed_koef
+        self.tors_speed = random.randint(1000, 5000) / settings.tors_speed_koef
 
-        self.dot_pos_num = random.randint(1,4)
-        self.dot_in_middle_chanse = random.randint(1,7)
+        self.dot_pos_num = random.randint(1, 4)
+        self.dot_in_middle_chanse = random.randint(1, 7)
         self.step = random.randint(100, 800)
 
-
-  
         # self.dot_speed_whole = random.randint(settings.whole_speed_max, settings.whole_speed_min)
 
         self.gravity_coef_x = settings.gravity_point_x / settings.screen_width
@@ -496,18 +572,19 @@ class Dot_hole():
         # self.dark_whole = settings.dark_whole_index
 
         if self.dot_in_middle_chanse == 3:
-            self.x = random.randint(settings.screen_width//4,
-                                            settings.screen_width//4*3)
-            self.y = random.randint(settings.screen_height//4,
-                                            settings.screen_height//4*3)
+            self.x = random.randint(settings.screen_width // 4,
+                                    settings.screen_width // 4 * 3)
+            self.y = random.randint(settings.screen_height // 4,
+                                    settings.screen_height // 4 * 3)
 
         elif self.dot_pos_num == 1:
-            self.x= random.randint(-self.create_plus,
+            self.x = random.randint(-self.create_plus,
                                     settings.screen_width + self.create_plus)
-            self.y= random.randint(-self.create_plus,settings.screen_height//4)
+            self.y = random.randint(-self.create_plus,
+                                    settings.screen_height // 4)
 
         elif self.dot_pos_num == 2:
-            self.x = random.randint(settings.screen_width//4*3,
+            self.x = random.randint(settings.screen_width // 4 * 3,
                                     settings.screen_width + self.create_plus)
             self.y = random.randint(-self.create_plus,
                                     settings.screen_height + self.create_plus)
@@ -515,36 +592,33 @@ class Dot_hole():
         elif self.dot_pos_num == 3:
             self.x = random.randint(-self.create_plus,
                                     settings.screen_width + self.create_plus)
-            self.y = random.randint(settings.screen_height//4*3,
+            self.y = random.randint(settings.screen_height // 4 * 3,
                                     settings.screen_height + self.create_plus)
 
         elif self.dot_pos_num == 4:
-            self.x = random.randint(-self.create_plus, settings.screen_width//4)
+            self.x = random.randint(-self.create_plus,
+                                    settings.screen_width // 4)
             self.y = random.randint(-self.create_plus,
-                                    settings.screen_height +self.create_plus)
+                                    settings.screen_height + self.create_plus)
 
         self.proj_dot_x = abs(self.x - settings.gravity_point_x)
         self.proj_dot_y = abs(self.y - settings.gravity_point_y)
 
-
-
         self.color = settings.dots_colors[random.randint(0,
-                                                len(settings.dots_colors) - 1)]
+                                                         len(settings.dots_colors) - 1)]
 
         self.radius_dot_dist = m.sqrt(self.proj_dot_x**2 + self.proj_dot_y**2)
 
-        self.whole_rad = settings.screen_height//settings.screen_part_whole_rad
+        self.whole_rad = settings.screen_height // settings.screen_part_whole_rad
 
         self.x_int = int(self.x)
         self.y_int = int(self.y)
         self.pos = self.x_int, self.y_int
 
-
-
         self.speed_x = abs((self.x -
-                         settings.screen_width*self.gravity_coef_x)/self.step)
+                            settings.screen_width * self.gravity_coef_x) / self.step)
         self.speed_y = abs((self.y -
-                         settings.screen_height*self.gravity_coef_y)/self.step)
+                            settings.screen_height * self.gravity_coef_y) / self.step)
         self.arr = []
 
         for k in range(self.track_size):
@@ -553,19 +627,15 @@ class Dot_hole():
         for k in range(self.track_size):
             self.arr[k] = self.pos
 
-
-
-
-
     def draw_dot(self, red_border):
         if not red_border:
-            self.rect= pg.draw.circle(self.screen,self.color,self.pos,self.rad)
+            self.rect = pg.draw.circle(
+                self.screen, self.color, self.pos, self.rad)
         else:
 
-
-            for k in range(1, self.track_size+1, 4):
+            for k in range(1, self.track_size + 1, 4):
                 self.rect = pg.draw.circle(self.screen,
-                                                (255, 0, 255), self.arr[-k], 0)
+                                           (255, 0, 255), self.arr[-k], 0)
 
             self.rect = pg.draw.circle(self.screen, (255, 0, 0), self.pos, 1)
 
@@ -576,38 +646,46 @@ class Dot_hole():
         #     self.rad = random.randint(0, 1)
     def pos_change(self):
         for k in range(self.track_size):
-            if k == self.track_size-1:
+            if k == self.track_size - 1:
                 self.arr[k] = self.pos
             else:
-                self.arr[k] = self.arr[k+1]
+                self.arr[k] = self.arr[k + 1]
         self.pos = (int(self.x), int(self.y))
 
-        # if self.y > settings.screen_height*self.gravity_coef_y:
-        #     self.y_koef = 1
-        # else:
-        #     self.y_koef = -1
-
     def zoom_off(self, size_koef):
-        if size_koef > 0.01:
+        if size_koef > 0.015:
             if self.x < self.del_x - 1:
-                self.x +=  self.speed_x
+                self.x += self.speed_x
             elif self.x > self.del_x + 1:
                 self.x -= self.speed_x
-
 
             if self.y > self.del_y + 1:
                 self.y -= self.speed_y
             elif self.y < self.del_y - 1:
                 self.y += self.speed_y
+
+            # p = round((self.settings.screen_height // 1.5 - self.settings.size_slider_y) /
+            #           abs(self.settings.screen_height // 2.65 - self.settings.screen_height // 1.5), 3)
+            # #
+            # distance_x = (self.x - self.settings.screen_width // 2) / \
+            #     (self.settings.screen_height // 1.5 - self.settings.size_slider_y) * \
+            #     abs(self.settings.screen_height // 2.65 -
+            #         self.settings.screen_height // 1.5)
+            # #
+            # self.x = self.settings.screen_width // 2 + distance_x * p
+            #
+            # distance_y = (self.y - self.settings.screen_height *
+            #               self.gravity_coef_y) * (p ** -1) * (1 - self.step / 100000)
+            # self.y = self.settings.screen_height // 2 + distance_y * p
+
             self.pos_change()
 
     def zoom_on(self, size_koef, max_size):
         if size_koef < max_size:
             if self.x < self.del_x - 1:
-                self.x -=  self.speed_x
+                self.x -= self.speed_x
             elif self.x > self.del_x + 1:
                 self.x += self.speed_x
-
 
             if self.y > self.del_y + 1:
                 self.y += self.speed_y
@@ -627,31 +705,20 @@ import time
 
 
 """Функция обномления всей информации на экране"""
+
+
 def screen_update(screen, settings, clock):
 
     object_dot = []
 
     # Заливка экрана черным фоном
-    screen.fill((0,0,0))
+    screen.fill((0, 0, 3))
 
     create_lang_changer(screen, settings)
 
     # dark_hole_mooving(screen, settings)
 
-    # if time.perf_counter() - settings.time_1 >= 1:
-    #     settings.time_1 = time.perf_counter()-0.5
-    #     settings.fps /= 2
-
-    # settings.fps += 1
-    #
-    # fps_num = round(settings.fps/(time.perf_counter() - settings.time_1))
-
     settings.fps = round(clock.get_fps())
-
-    text_title = settings.hint_myfont.render(str(settings.fps),
-                                                        True, (255, 255, 255))
-    screen.blit(text_title,(10, settings.screen_height - 30))
-
 
     if settings.click == 1:
         """Запускается, если режим черной дыры"""
@@ -663,9 +730,12 @@ def screen_update(screen, settings, clock):
         solar_system_mode(screen, settings)
 
     draw_hint(screen, settings)
+    text_title = settings.hint_myfont.render(str(settings.fps),
+                                             True, (255, 255, 255))
+    screen.blit(text_title, (10, settings.screen_height - 30))
 
     # Включение/отключение поля с текстом по мере приближения и отдаления
-    if settings.size_koef>=settings.max_size_koef_arr[settings.follow_koef]/1.1:
+    if settings.size_koef >= settings.max_size_koef_arr[settings.follow_koef] / 1.1:
         settings.frame = True
     else:
         settings.frame = False
@@ -673,13 +743,16 @@ def screen_update(screen, settings, clock):
     # обновление окна
     pg.display.flip()
 
+
 """Режим солнечной системы"""
+
+
 def solar_system_mode(screen, settings):
-    # text = settings.all_text[settings.lang_txt_change][4]
-    #
-    # text_title = settings.myfont.render(str(settings.solar_time) + text,
-    #                                                     True, (255, 255, 255))
-    # screen.blit(text_title,(settings.screen_width//2 - 10, 20))
+    text = settings.all_text[settings.lang_txt_change][4]
+
+    text_title = settings.myfont.render(str(settings.solar_time) + text,
+                                        True, (255, 255, 255))
+    screen.blit(text_title, (settings.screen_width // 2 - 10, 20))
 
     time_slider(screen, settings)
     size_slider(screen, settings)
@@ -697,39 +770,29 @@ def solar_system_mode(screen, settings):
     update_dot_hole(screen, settings)
 # Обновление положения планет, для следования за выбранной планетой
     settings.new_x_for_planets =\
-                            settings.object_planets[settings.follow_koef].x_cor
+        settings.object_planets[settings.follow_koef].x_cor
     settings.new_y_for_planets =\
-                            settings.object_planets[settings.follow_koef].y_cor
+        settings.object_planets[settings.follow_koef].y_cor
     update_planets_cors(screen, settings)
 
     # Создает поле с текстом при достаточном приближении к планете
     if settings.frame:
         create_frame(screen, settings)
 
+
 """Режим черной дыры"""
+
+
 def black_hole_mode(screen, settings):
-    if settings.settings_frame:
-        if settings.set_alpha < 200:
-            settings.set_alpha += 4
-        create_settings_frame(screen, settings)
-    else:
-        if settings.set_alpha > 0:
-            settings.set_alpha -= 4
-            create_settings_frame(screen, settings)
 
-    settings.settings_img = settings.settings_img.convert()
-    settings.settings_img.set_alpha(120)
-    screen.blit(settings.settings_img, (settings.screen_width - 30, 10))
-
-
-    ar = random.randint(0, settings.dot_num-1)
+    ar = random.randint(0, settings.dot_num - 1)
     p = settings.object_dot[ar]
     p.rad = random.randint(settings.min_dot_radius, settings.max_dot_radius)
 
     # Создание формы центра черной дыры
 
-    dark_dot = pg.draw.circle(screen, (0,0,0), (settings.gravity_point_x,
-                                                settings.gravity_point_y), 10)
+    dark_dot = pg.draw.circle(screen, (0, 0, 0), (settings.gravity_point_x,
+                                                  settings.gravity_point_y), 30)
     # Я знаю, тебе страшно это читать
     # Прорисовка всех звезд
     update_dot(screen, settings)
@@ -745,18 +808,32 @@ def black_hole_mode(screen, settings):
             except AttributeError:
                 print("Dot' object has no attribute 'last_dot'")
 
-
-
     [clip_check(i) for i in settings.object_dot]
 
     # Передвижение черной дыры за курсором при нажатии лкм
     black_hole_following(screen, settings)
     # orange_dot_2 = pg.draw.circle(screen, (221,75,12), (settings.gravity_point_x, settings.gravity_point_y), 13)
     # white_dot = pg.draw.circle(screen, (249,239,221), (settings.gravity_point_x, settings.gravity_point_y), 12)
-    dark_dot = pg.draw.circle(screen, (0,0,0),
-                    (settings.gravity_point_x, settings.gravity_point_y), 30)
+    dark_dot = pg.draw.circle(screen, (0, 0, 0),
+                              (settings.gravity_point_x, settings.gravity_point_y), 30)
+
+    if settings.settings_frame:
+        if settings.set_alpha < 200:
+            settings.set_alpha += 4
+        create_settings_frame(screen, settings)
+    else:
+        if settings.set_alpha > 0:
+            settings.set_alpha -= 4
+            create_settings_frame(screen, settings)
+
+    settings.settings_img = settings.settings_img.convert()
+    settings.settings_img.set_alpha(120)
+    screen.blit(settings.settings_img, (settings.screen_width - 30, 10))
+
 
 """Рисует подсказки управления"""
+
+
 def draw_hint(screen, settings):
     settings.question_img = settings.question_img.convert()
     # settings.question_img.set_alpha(90)
@@ -783,7 +860,6 @@ def draw_hint(screen, settings):
             settings.hint_hole_alpha -= 4
             hole_hint(screen, settings)
 
-
     if settings.hint_solar:
         if settings.hint_solar_alpha < 240:
             settings.hint_solar_alpha += 4
@@ -796,58 +872,76 @@ def draw_hint(screen, settings):
 
 
 """Проверка использования слайдера"""
+
+
 def using_sliders(screen, settings):
     if settings.slider_hold:
-        if  settings.screen_width // 1.5 > pg.mouse.get_pos()[0]\
-                                                > settings.screen_width // 3:
-            for i in settings.object_planets:
-                # i.t = 210 * 13
-                i.t += (settings.slider_x1 - pg.mouse.get_pos()[0])\
-                                                    / (-settings.size_koef *30)
-                i.update()
+        m_pos = pg.mouse.get_pos()[0]
 
-            for i in settings.arr_astro:
-                # i.t = 210 * 13
-                i.t += (settings.slider_x1 - pg.mouse.get_pos()[0])\
-                                                    / (-settings.size_koef *30)
-                i.update()
+        if m_pos > settings.screen_width // 1.5:
+            m_pos = settings.screen_width // 1.5
+        elif m_pos < settings.screen_width // 3:
+            m_pos = settings.screen_width // 3
 
-            settings.slider_x1 = pg.mouse.get_pos()[0]
+        for i in settings.object_planets:
+            # i.t = 210 * 13
+            i.t += round((settings.slider_x1 - m_pos)
+                         / (-settings.size_koef * 30), 3)
+            i.update()
 
+        for i in settings.arr_astro:
+            # i.t = 210 * 13
+            i.t += (settings.slider_x1 - m_pos)\
+                / (-settings.size_koef * 30)
+            i.update()
 
-    step = (settings.max_size_koef_arr[settings.follow_koef])\
-                / (settings.screen_height // 2.65 - settings.screen_height//1.5)
+        settings.slider_x1 = m_pos
+
+    step = ((settings.max_size_koef_arr[settings.follow_koef])
+            / (settings.screen_height // 2.65 - settings.screen_height // 1.5))
     if settings.size_slider_y_hold:
-        if settings.size_slider_y >= settings.screen_height // 2.65\
-                    and pg.mouse.get_pos()[1] < settings.screen_height // 1.5:
 
-            if pg.mouse.get_pos()[1] > settings.screen_height // 2.65:
-                settings.size_koef =\
-                (pg.mouse.get_pos()[1] - settings.screen_height // 1.5) * step
+        m_pos = pg.mouse.get_pos()[1]
+        if m_pos > settings.screen_height // 1.5:
+            m_pos = settings.screen_height // 1.5
+        elif m_pos < settings.screen_height // 2.65:
+            m_pos = settings.screen_height // 2.65
 
-                settings.slider_pos_old = settings.slider_pos_now
-                settings.slider_pos_now = pg.mouse.get_pos()[1]
+        settings.size_slider_y = m_pos
 
-                if settings.slider_pos_old > settings.slider_pos_now:
-                    for i in settings.obj_dot_hole:
-                        i.zoom_on(settings.size_koef, settings.max_size_koef)
-                elif settings.slider_pos_old < settings.slider_pos_now:
-                    for i in settings.obj_dot_hole:
-                        i.zoom_off(settings.size_koef)
+        settings.size_koef =\
+            (m_pos - settings.screen_height // 1.5) * step + 0.015
 
-                update_planets_size(screen, settings)
-                settings.size_slider_y = pg.mouse.get_pos()[1]
+        settings.slider_pos_old = settings.slider_pos_now
+        settings.slider_pos_now = m_pos
+
+        if settings.slider_pos_old > settings.slider_pos_now:
+            for i in settings.obj_dot_hole:
+                i.zoom_on(settings.size_koef, settings.max_size_koef)
+        elif settings.slider_pos_old < settings.slider_pos_now:
+            for i in settings.obj_dot_hole:
+                i.zoom_off(settings.size_koef)
+
+        update_planets_size(screen, settings)
+        # settings.size_slider_y = m_pos
+
     else:
-        settings.size_slider_y =\
-                        settings.size_koef / step + settings.screen_height//1.5
+        settings.size_slider_y = (settings.size_koef +
+                                  settings.screen_height // 1.5 * step - 0.015) / (step)
+
 
 """Инициализация всех точек при черной дыре"""
+
+
 def dot_init(settings, screen):
     for k in range(settings.dot_num):
         dot = Dot(settings, screen)
         settings.object_dot.append(dot)
 
+
 """Инициализация астероидов"""
+
+
 def astro_init(screen, settings):
     for k in range(settings.astro_num):
         astro = Astro(screen, settings)
@@ -855,42 +949,63 @@ def astro_init(screen, settings):
 
 
 """Инициализация всех точек при солнечной системе"""
+
+
 def dot_hole_init(settings, screen):
     for k in range(settings.dot_hole_num):
         dot = Dot_hole(settings, screen)
         settings.obj_dot_hole.append(dot)
+
+
 """Обновление всех точек при Черной дыре"""
+
+
 def update_dot(screen, settings):
     if settings.object_dot:
         list(map(lambda i: i.update(settings), settings.object_dot))
 
+
 """Обновление всех точек при Солнечной системе"""
+
+
 def update_dot_hole(screen, settings):
-    list(map(lambda i: i.update(), settings.obj_dot_hole))
+    map(lambda i: i.update(), settings.obj_dot_hole)
+
 
 """Создание всех планет"""
+
+
 def create_planets(screen, settings):
     print('\n')
     for k in range(len(settings.planets_img)):
         planet = Planets(settings, screen, k)
-        print(settings.planets_names[k]\
-            + settings.all_text[settings.lang_txt_change][0]
-            + '( ' + str(planet.x) + '; ' + str(planet.y) + ')')
+        print(settings.planets_names[k]
+              + settings.all_text[settings.lang_txt_change][0]
+              + '( ' + str(planet.x) + '; ' + str(planet.y) + ')')
         settings.object_planets.append(planet)
         planet.draw_planets()
 
+
 """Обновление всех планет"""
+
+
 def update_system(screen, settings):
     planets = Planets(settings, screen)
     planets.update(settings)
 
+
 """Создание всех точек при черной дыре"""
+
+
 def create_dot(screen, settings):
     dot = Dot(settings, screen)
     settings.object_dot.append(dot)
     dot.draw_dot()
 
+
 """Изменение центра гравитации при смене положения черной дыры"""
+
+
 def change_gravity(screen, settings, x, y):
     settings.hole_x = x
     settings.hole_y = y
@@ -906,16 +1021,19 @@ def change_gravity(screen, settings, x, y):
         i.gravity_coef_x = settings.gravity_point_x / settings.screen_width
         i.gravity_coef_y = settings.gravity_point_y / settings.screen_height
 
-        i.del_x = settings.screen_width*i.gravity_coef_x
-        i.del_y = settings.screen_height*i.gravity_coef_y
+        i.del_x = settings.screen_width * i.gravity_coef_x
+        i.del_y = settings.screen_height * i.gravity_coef_y
     # Перезапуск движения
     restart_moving(screen, settings)
 
+
 """Перезапуск движения"""
+
+
 def restart_moving(screen, settings):
     settings.staying_dots.clear()
     for i in settings.object_dot:
-        i.tors_speed = random.randint(1000 , 5000)/settings.tors_speed_koef
+        i.tors_speed = random.randint(1000, 5000) / settings.tors_speed_koef
 
         i.radius_dot_dist = m.sqrt(i.proj_dot_x**2 + i.proj_dot_y**2)
         i.step = random.randint(settings.max_speed, settings.min_speed)
@@ -926,86 +1044,113 @@ def restart_moving(screen, settings):
             i.speed_y = 0
 
             i.dot_speed_whole = random.randint(settings.whole_speed_max,
-                                                    settings.whole_speed_min)
+                                               settings.whole_speed_min)
 
             if i.radius_dot_dist <= i.whole_rad\
-                                    and i.radius_dot_dist >= i.whole_rad//1.5:
+                    and i.radius_dot_dist >= i.whole_rad // 1.5:
                 i.speed_x = abs((i.x -
-                        settings.screen_width*i.gravity_coef_x)/i.step)
+                                 settings.screen_width * i.gravity_coef_x) / i.step)
                 i.speed_y = abs((i.y -
-                        settings.screen_height*i.gravity_coef_y)/i.step)
-            elif i.radius_dot_dist < i.whole_rad//1.5\
-                                    and i.radius_dot_dist >= i.whole_rad//2:
+                                 settings.screen_height * i.gravity_coef_y) / i.step)
+            elif i.radius_dot_dist < i.whole_rad // 1.5\
+                    and i.radius_dot_dist >= i.whole_rad // 2:
                 i.speed_x = abs((i.x -
-                        settings.screen_width*i.gravity_coef_x)/(i.step/2))
+                                 settings.screen_width * i.gravity_coef_x) / (i.step / 2))
                 i.speed_y = abs((i.y -
-                        settings.screen_height*i.gravity_coef_y)/(i.step/2))
-            elif i.radius_dot_dist < i.whole_rad//2:
+                                 settings.screen_height * i.gravity_coef_y) / (i.step / 2))
+            elif i.radius_dot_dist < i.whole_rad // 2:
                 i.speed_x = abs((i.x -
-                        settings.screen_width*i.gravity_coef_x)/(i.step/10))
+                                 settings.screen_width * i.gravity_coef_x) / (i.step / 10))
                 i.speed_y = abs((i.y -
-                        settings.screen_height*i.gravity_coef_y)/(i.step/10))
-
+                                 settings.screen_height * i.gravity_coef_y) / (i.step / 10))
 
         elif i.dark_whole == -1:
             i.staying_arg = 0
             i.step = random.randint(settings.max_speed, settings.min_speed)
             i.speed_x = abs((i.x -
-                             settings.screen_width*i.gravity_coef_x)/i.step)
+                             settings.screen_width * i.gravity_coef_x) / i.step)
             i.speed_y = abs((i.y -
-                             settings.screen_height*i.gravity_coef_y)/i.step)
+                             settings.screen_height * i.gravity_coef_y) / i.step)
             if i.staying == 1 and sum(settings.staying_dots)\
-                                < settings.dot_num//settings.staying_dots_part:
-             i.staying_arg = 1
-             i.speed_x = 0
-             i.speed_y = 0
+                    < settings.dot_num // settings.staying_dots_part:
+                i.staying_arg = 1
+                i.speed_x = 0
+                i.speed_y = 0
 
         settings.staying_dots.append(i.staying_arg)
 
+
 """Изменение размеров планет при приближении или отдалении"""
-def update_planets_size(screen, settings, check = 10):
+
+
+def update_planets_size(screen, settings, check=10):
 
     if not settings.red_border:
         for i in settings.arr_astro:
-            index = settings.arr_astro.index(i)
+            if i.rect.clip(settings.screen_rect):
+                index = settings.arr_astro.index(i)
 
-            if settings.size_koef < 0.07:
-                i.img = pg.transform.scale(settings.astro_img, (3,3))
-            elif settings.size_koef < 0.2:
-                i.img = pg.transform.scale(settings.astro_img, (4,4))
-            else:
-                i.img = pg.transform.scale(settings.astro_img, (6,6))
-
+                # if settings.size_koef < 0.07:
+                #     i.img = pg.transform.scale(settings.astro_img, (3, 3))
+                # elif settings.size_koef < 0.2:
+                #     i.img = pg.transform.scale(settings.astro_img, (4, 4))
+                # else:
+                #     i.img = pg.transform.scale(settings.astro_img, (6, 6))
 
         for i in settings.object_planets:
-            index = settings.object_planets.index(i)
+            if i.shadow.clip(settings.screen_rect):
+                index = settings.object_planets.index(i)
 
-            if int(settings.planets_rad[index] * settings.size_koef) > 1:
-                if i.shadow.clip(settings.screen_rect)\
-                                            or check == index or check == 'all':
-
-                    i.planet_img=pg.transform.scale(settings.planets_img[index],
-                     (int(settings.planets_rad[index] * settings.size_koef),
-                     int(settings.planets_rad[index] * settings.size_koef)))
+                if settings.size_koef > 6 and settings.follow_koef in [1, 2]:
+                    if index != 0:
+                        if int(settings.planets_rad[index] * settings.size_koef) > 0.5:
+                            if i.shadow.clip(settings.screen_rect) or check == index or check == 'all':
+                                try:
+                                    s = int(
+                                        settings.planets_rad[index] * settings.size_koef)
+                                    i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                                      (s if s >= 2 else 2,
+                                                                       s if s >= 2 else 2))
+                                except:
+                                    pass
+                            else:
+                                i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                                  (2, 2))
+                        else:
+                            i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                              (2, 2))
                 else:
-                    i.planet_img=pg.transform.scale(settings.planets_img[index],
-                     (int(settings.planets_rad[index] * 0.001),
-                     int(settings.planets_rad[index] * 0.001)))
-            else:
-                i.planet_img = pg.transform.scale(settings.planets_img[index],
-                 (2,2))
+                    if int(settings.planets_rad[index] * settings.size_koef) > 0.5:
+                        if i.shadow.clip(settings.screen_rect) or check == index or check == 'all':
+                            try:
+                                s = int(
+                                    settings.planets_rad[index] * settings.size_koef)
+                                i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                                  (s if s >= 2 else 2,
+                                                                   s if s >= 2 else 2))
+                            except:
+                                pass
+                        else:
+                            i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                              (2, 2))
+                    else:
+                        i.planet_img = pg.transform.scale(settings.planets_img[index],
+                                                          (2, 2))
+
 
 """Попытка сделать движущуюся черную дыру (отключено)"""
+
+
 def dark_hole_mooving(screen, settings):
 
     settings.hole_x += settings.x_speed * 0.8 * settings.speed_hole_koef
     settings.hole_y += settings.y_speed * 0.8 * settings.speed_hole_koef
 
-    if settings.hole_x > settings.screen_width: settings.hole_x = 0
-    elif settings.hole_x < 0: settings.hole_x = settings.screen_width
+    if settings.hole_x > settings.screen_width - 30 or settings.hole_x < 30:
+        settings.x_speed *= -1
 
-    if settings.hole_y > settings.screen_height: settings.hole_y = 0
-    elif settings.hole_y < 0: settings.hole_y = settings.screen_height
+    if settings.hole_y > settings.screen_height - 30 or settings.hole_y < 30:
+        settings.y_speed *= -1
 
     x = settings.hole_x
     y = settings.hole_y
@@ -1023,9 +1168,12 @@ def dark_hole_mooving(screen, settings):
 
     settings.staying_dots.clear()
     change_gravity(screen, settings, x, y)
-    restart_moving(screen, settings)
+    # restart_moving(screen, settings)
+
 
 """Изменение координат точек при планетах"""
+
+
 def update_dots_in_solar_cors(screen, settings):
     for i in settings.obj_dot_hole:
 
@@ -1034,7 +1182,10 @@ def update_dots_in_solar_cors(screen, settings):
 
         i.pos_change()
 
+
 """Изменение координат планет"""
+
+
 def update_planets_cors(screen, settings):
 
     koef = settings.follow_koef
@@ -1048,40 +1199,46 @@ def update_planets_cors(screen, settings):
             i.y_0 = settings.middle[1]
         else:
             i.x_0 += settings.middle[0] - x\
-                    - int(settings.planets_rad[koef]//2 * settings.size_koef)
+                - int(settings.planets_rad[koef] // 2 * settings.size_koef)
             i.y_0 += settings.middle[1] - y\
-                    - int(settings.planets_rad[koef]//2 * settings.size_koef)
+                - int(settings.planets_rad[koef] // 2 * settings.size_koef)
 
         i.update()
         if not settings.red_border:
-            i.draw()
-        else: i.draw_shadow()
+            if i.rect.clip(settings.screen_rect):
+                i.draw()
+
+        else:
+            i.draw_shadow()
 
     """Планеты"""
     for i in settings.object_planets:
-        if koef == 0 :
+        if koef == 0:
             i.x_0 = settings.middle[0]
             i.y_0 = settings.middle[1]
         else:
             i.x_0 += settings.middle[0] - x\
-                    - int(settings.planets_rad[koef]//2 * settings.size_koef)
+                - int(settings.planets_rad[koef] // 2 * settings.size_koef)
             i.y_0 += settings.middle[1] - y\
-                    - int(settings.planets_rad[koef]//2 * settings.size_koef)
+                - int(settings.planets_rad[koef] // 2 * settings.size_koef)
 
         i.update()
         i.draw_planets_rect()
         if not settings.red_border:
             if settings.size_koef > 1:
+
                 if i.shadow.clip(settings.screen_rect):
-                    try: update_planets_size(screen, settings, koef)
-                    except: None
+                    update_planets_size(screen, settings, koef)
                     i.draw_planets()
+
             else:
-                try: update_planets_size(screen, settings, koef)
-                except: None
+                update_planets_size(screen, settings, koef)
                 i.draw_planets()
 
+
 """Добавление пунктов смены языка"""
+
+
 def create_lang_changer(screen, settings):
     width = settings.screen_width
     height = settings.screen_height
@@ -1104,12 +1261,15 @@ def create_lang_changer(screen, settings):
         hint_surf.set_alpha(50 + 100 * abs(settings.lang_txt_change - k))
         screen.blit(hint_surf, hint)
 
-        text_title = settings.myfont.render(txt, True, (0,0,0))
+        text_title = settings.myfont.render(txt, True, (0, 0, 0))
         screen.blit(text_title, (width - (size - x), height - 27 - y))
 
         x, size, txt = 1, 30, "Eng"
 
+
 """Добавление меню подсказки"""
+
+
 def create_hint(screen, settings):
     x = 0
     hint = pg.Rect((0, 0, 480, 100))
@@ -1121,36 +1281,40 @@ def create_hint(screen, settings):
     hint_2 = pg.Rect((40, 20, 190, 50))
     hint_surf_2 = pg.Surface((190, 50))
     hint_surf_2.fill((100, 100, 100))
-    hint_surf_2.set_alpha(settings.hint_alpha*2)
+    hint_surf_2.set_alpha(settings.hint_alpha * 2)
     screen.blit(hint_surf_2, hint_2)
 
-    if settings.lang_txt_change == 1: x = 15
+    if settings.lang_txt_change == 1:
+        x = 15
     color = (settings.text_alpha, settings.text_alpha, settings.text_alpha)
-    text_title = settings.myfont.render\
-                (settings.all_text[settings.lang_txt_change][1], True, (0,0,0))
-    screen.blit(text_title,(70 + x, 32))
+    text_title = settings.myfont.render(
+        settings.all_text[settings.lang_txt_change][1], True, (0, 0, 0))
+    screen.blit(text_title, (70 + x, 32))
 
     hint_3 = pg.Rect((250, 20, 200, 50))
     hint_surf_3 = pg.Surface((200, 50))
     hint_surf_3.fill((100, 100, 100))
-    hint_surf_3.set_alpha(settings.hint_alpha*2)
+    hint_surf_3.set_alpha(settings.hint_alpha * 2)
     screen.blit(hint_surf_3, hint_3)
 
     color = (settings.text_alpha, settings.text_alpha, settings.text_alpha)
-    text_title = settings.myfont.render\
-                (settings.all_text[settings.lang_txt_change][2], True, (0,0,0))
-    screen.blit(text_title,(270, 32))
+    text_title = settings.myfont.render(
+        settings.all_text[settings.lang_txt_change][2], True, (0, 0, 0))
+    screen.blit(text_title, (270, 32))
+
 
 """Создание подсказки для режима с черной дырой"""
+
+
 def hole_hint(screen, settings):
     txt = settings.text_hole.split('|')
     hint_4 = pg.Rect((0, 100, 240, 500))
     hint_surf_4 = pg.Surface((240, 500))
     hint_surf_4.fill((30, 30, 30))
-    hint_surf_4.set_alpha(settings.hint_hole_alpha//4)
+    hint_surf_4.set_alpha(settings.hint_hole_alpha // 4)
     screen.blit(hint_surf_4, hint_4)
 
-    koef = 450/len(txt)
+    koef = 450 / len(txt)
     y = 0
     for k in range(len(txt)):
         txt_hint = pg.Rect((0, 140 + y, 240, 140 + y))
@@ -1163,20 +1327,23 @@ def hole_hint(screen, settings):
     y = 0
     for k in range(len(txt)):
         color = (settings.text_alpha, settings.text_alpha, settings.text_alpha)
-        text = settings.myfont.render(txt[k], True, (0,0,0))
-        screen.blit(text,(5, 160 + y))
+        text = settings.myfont.render(txt[k], True, (0, 0, 0))
+        screen.blit(text, (5, 160 + y))
         y += koef
 
+
 """Создание подсказки для режима с солнечной системой"""
+
+
 def solar_hint(screen, settings):
     txt = settings.text_solar.split('|')
     hint_5 = pg.Rect((240, 100, 240, 500))
     hint_surf_5 = pg.Surface((240, 500))
     hint_surf_5.fill((30, 30, 30))
-    hint_surf_5.set_alpha(settings.hint_solar_alpha/4)
+    hint_surf_5.set_alpha(settings.hint_solar_alpha / 4)
     screen.blit(hint_surf_5, hint_5)
 
-    koef = 450/len(txt)
+    koef = 450 / len(txt)
     y = 0
     for k in range(len(txt)):
         txt_hint = pg.Rect((240, 140 + y, 240, 140 + y))
@@ -1189,37 +1356,41 @@ def solar_hint(screen, settings):
     y = 0
     for k in range(len(txt)):
         color = (settings.text_alpha, settings.text_alpha, settings.text_alpha)
-        text = settings.myfont.render(txt[k], True, (0,0,0))
-        screen.blit(text,(245, 160 + y))
+        text = settings.myfont.render(txt[k], True, (0, 0, 0))
+        screen.blit(text, (245, 160 + y))
         y += koef
 
 
 """создание поля с текстом"""
+
+
 def create_frame(screen, settings):
     text = settings.text_arr[settings.follow_koef].split('[')
     text[0] = text[0].replace('\n', ' ')
     text[1] = text[1].split('\n')
 
+    left_frame = pg.Rect((0, settings.screen_height // 8,
+                          settings.screen_width + 30, settings.screen_height // 6))
 
-    left_frame = pg.Rect((0, settings.screen_height//8,
-                        settings.screen_width + 30, settings.screen_height//6))
-
-    left_surf = pg.Surface((settings.screen_width//6 + 30,
-                        settings.screen_height - settings.screen_height//4))
+    left_surf = pg.Surface((settings.screen_width // 6 + 30,
+                            settings.screen_height - settings.screen_height // 4))
 
     left_surf.fill((20, 20, 20))
     left_surf.set_alpha(50)
     text_title = settings.title.render(text[0], True, (255, 255, 255))
 
     screen.blit(left_surf, left_frame)
-    screen.blit(text_title,(35, settings.screen_height//8))
-
+    screen.blit(text_title, (35, settings.screen_height // 8))
 
     for k in range(len(text[1])):
-        text_about = settings.hint_title.render(text[1][k], True,(255,255,255))
-        screen.blit(text_about,(40, settings.screen_height//6 + k * 28))
+        text_about = settings.hint_title.render(
+            text[1][k], True, (255, 255, 255))
+        screen.blit(text_about, (40, settings.screen_height // 6 + k * 28))
+
 
 """Перемещение черной дыры за мышкой"""
+
+
 def black_hole_following(screen, settings):
     if settings.black_hole_following:
         x, y = pg.mouse.get_pos()
@@ -1229,10 +1400,12 @@ def black_hole_following(screen, settings):
 
 
 """Создает слидер для перемотки времени"""
+
+
 def time_slider(screen, settings):
     pg.draw.line(screen, (15, 15, 15),
-        [settings.screen_width // 3 ,settings.screen_height - 40],
-         [settings.screen_width // 1.5, settings.screen_height - 40], 2)
+                 [settings.screen_width // 3, settings.screen_height - 40],
+                 [settings.screen_width // 1.5, settings.screen_height - 40], 2)
 
     x_1 = settings.slider_x1
     x_2 = int(5)
@@ -1240,31 +1413,36 @@ def time_slider(screen, settings):
     y_1 = settings.slider_y1
     y_2 = int(20)
 
-    pg.draw.rect(screen, (100, 100, 100), (x_1 , y_1, x_2 , y_2))
+    pg.draw.rect(screen, (100, 100, 100), (x_1, y_1, x_2, y_2))
+
 
 """Создает слайер для зума"""
+
+
 def size_slider(screen, settings):
     pg.draw.line(screen, (15, 15, 15),
-        [settings.screen_width - 30 ,settings.screen_height // 2.65],
-         [settings.screen_width - 30, settings.screen_height // 1.5], 2)
+                 [settings.screen_width - 30, settings.screen_height // 2.65],
+                 [settings.screen_width - 30, settings.screen_height // 1.5], 2)
 
     x_1 = settings.size_slider_x
     x_2 = int(20)
 
-    y_1 =  settings.size_slider_y
+    y_1 = settings.size_slider_y
     y_2 = int(5)
 
-    pg.draw.rect(screen, (100, 100, 100), (x_1 , y_1, x_2 , y_2))
+    pg.draw.rect(screen, (100, 100, 100), (x_1, y_1, x_2, y_2))
 
 
 """Создать вкладку настроек"""
+
+
 def create_settings_frame(screen, settings):
     text = settings.text_arr[settings.follow_koef].split('[')
     text[0] = text[0].replace('\n', ' ')
     text[1] = text[1].split('\n')
 
     left_frame = pg.Rect((settings.screen_width - 250, 0,
-                                                settings.screen_width - 30,30))
+                          settings.screen_width - 30, 30))
 
     left_surf = pg.Surface((250, 50))
 
@@ -1274,8 +1452,9 @@ def create_settings_frame(screen, settings):
     screen.blit(left_surf, left_frame)
 
     text_title = settings.hint_myfont.render(settings.all_text[settings.lang_txt_change][3],
-                                                            False, (0, 0, 0))
-    screen.blit(text_title,(settings.screen_width - 245, 0))
+                                             False, (120, 240, 120))
+    text_title.set_alpha(settings.set_alpha)
+    screen.blit(text_title, (settings.screen_width - 165, 0))
 
     arr = ['250', '500', '1000']
     y = 200
@@ -1289,19 +1468,22 @@ def create_settings_frame(screen, settings):
             if settings.heights[k] > 0:
                 settings.heights[k] -= 1
 
-
-
         if settings.settings_chosen == k:
-            color = (240, 240, 240)
-        else: color = (0, 0, 0)
+            color = (100, 240, 100)
+        else:
+            color = (0, 100, 0)
 
         text_title = settings.hint_title.render(arr[k], False, color)
         text_title.set_alpha(settings.set_alpha)
-        screen.blit(text_title,(settings.screen_width-y,20-settings.heights[k]))
+        screen.blit(text_title, (settings.screen_width -
+                                 y, 20 - settings.heights[k]))
 
         y -= 60
 
+
 """Изменение кол-ва точек при нажатии на вкладку настроек"""
+
+
 def change_num_dots(screen, settings):
 
     settings.first_time = time.perf_counter()
@@ -1315,7 +1497,7 @@ def change_num_dots(screen, settings):
         i.staying = random.randint(1, settings.staying_dots_part)
 
         if i.dark_whole == -1 and i.staying == 1 and sum(settings.staying_dots)\
-                                < settings.dot_num//settings.staying_dots_part:
+                < settings.dot_num // settings.staying_dots_part:
             i.staying_arg = 1
             i.speed_x = 0
             i.speed_y = 0
@@ -1326,35 +1508,42 @@ def change_num_dots(screen, settings):
 
 
 """Изменяет файлы с текстом под нужный язык"""
+
+
 def change_lang(settings):
     settings.text_hole =\
-                settings.hole_hint_txt[settings.lang_txt_change]
+        settings.hole_hint_txt[settings.lang_txt_change]
     settings.text_solar =\
-                settings.solar_hint_txt[settings.lang_txt_change]
+        settings.solar_hint_txt[settings.lang_txt_change]
     settings.text_arr =\
-                settings.text_planets[settings.lang_txt_change]
+        settings.text_planets[settings.lang_txt_change]
+
 
 def check_change_lang(screen, settings):
     width = settings.screen_width
     height = settings.screen_height
 
     if pg.mouse.get_pos()[0] > width - 60\
-                and pg.mouse.get_pos()[0] < width - 30\
-                and pg.mouse.get_pos()[1] > height - 35\
-                and pg.mouse.get_pos()[1] < height:
+            and pg.mouse.get_pos()[0] < width - 30\
+            and pg.mouse.get_pos()[1] > height - 35\
+            and pg.mouse.get_pos()[1] < height:
         settings.lang_txt_change = 1
         change_lang(settings)
         return 0
     elif pg.mouse.get_pos()[0] > width - 30\
-                and pg.mouse.get_pos()[0] < width\
-                and pg.mouse.get_pos()[1] > height - 35\
-                and pg.mouse.get_pos()[1] < height:
-         settings.lang_txt_change = 0
-         change_lang(settings)
-         return 0
-    else: return 1
+            and pg.mouse.get_pos()[0] < width\
+            and pg.mouse.get_pos()[1] > height - 35\
+            and pg.mouse.get_pos()[1] < height:
+        settings.lang_txt_change = 0
+        change_lang(settings)
+        return 0
+    else:
+        return 1
+
 
 """Проверка собыйти мыши"""
+
+
 def check_mouse_events(screen, settings, event):
     settings.size_bool = False
 
@@ -1376,9 +1565,9 @@ def check_mouse_events(screen, settings, event):
 
             if settings.click == 1:
                 if pg.mouse.get_pos()[0] > settings.x_points[0]\
-                                and pg.mouse.get_pos()[0] < settings.x_points[1]\
-                                and pg.mouse.get_pos()[1] < 50\
-                                and pg.mouse.get_pos()[1] > 30:
+                        and pg.mouse.get_pos()[0] < settings.x_points[1]\
+                        and pg.mouse.get_pos()[1] < 50\
+                        and pg.mouse.get_pos()[1] > 30:
 
                     if settings.settings_chosen != 0:
                         settings.settings_chosen = 0
@@ -1386,24 +1575,25 @@ def check_mouse_events(screen, settings, event):
                         change_num_dots(screen, settings)
 
                 elif pg.mouse.get_pos()[0] > settings.x_points[2]\
-                                and  pg.mouse.get_pos()[0] < settings.x_points[3]\
-                                and pg.mouse.get_pos()[1] < 50\
-                                and pg.mouse.get_pos()[1] > 30:
+                        and pg.mouse.get_pos()[0] < settings.x_points[3]\
+                        and pg.mouse.get_pos()[1] < 50\
+                        and pg.mouse.get_pos()[1] > 30:
                     if settings.settings_chosen != 1:
                         settings.settings_chosen = 1
                         settings.dot_num = 500
                         change_num_dots(screen, settings)
 
                 elif pg.mouse.get_pos()[0] > settings.x_points[4]\
-                                and pg.mouse.get_pos()[0] < settings.x_points[5]\
-                                and pg.mouse.get_pos()[1] < 50\
-                                and pg.mouse.get_pos()[1] > 30:
+                        and pg.mouse.get_pos()[0] < settings.x_points[5]\
+                        and pg.mouse.get_pos()[1] < 50\
+                        and pg.mouse.get_pos()[1] > 30:
                     if settings.settings_chosen != 2:
                         settings.settings_chosen = 2
                         settings.dot_num = 1000
                         change_num_dots(screen, settings)
 
-                else: settings.black_hole_following = True
+                else:
+                    settings.black_hole_following = True
 
         if settings.click == -1:
             plus = 20
@@ -1411,54 +1601,52 @@ def check_mouse_events(screen, settings, event):
                 if pg.mouse.get_pos()[0] > settings.planets_x_cors[k] - plus\
                     and pg.mouse.get_pos()[0] < settings.planets_x_cors[k]\
                         + settings.planets_rad[k] * settings.size_koef + plus\
-                    and pg.mouse.get_pos()[1] > settings.planets_y_cors[k]-plus\
+                    and pg.mouse.get_pos()[1] > settings.planets_y_cors[k] - plus\
                     and pg.mouse.get_pos()[1] < settings.planets_y_cors[k]\
                         + settings.planets_rad[k] * settings.size_koef + plus:
                     if settings.size_koef >= settings.max_size_koef:
                         check = True
 
-                    else: check = False
+                    else:
+                        check = False
 
                     settings.follow_koef = k
 
                     settings.max_size_koef =\
-                            settings.max_size_koef_arr[settings.follow_koef]
+                        settings.max_size_koef_arr[settings.follow_koef]
 
                     if settings.size_koef > settings.max_size_koef or check == True:
                         settings.size_koef = settings.max_size_koef
 
-                    update_planets_size(screen, settings, settings.follow_koef)
-            if pg.mouse.get_pos()[0] > (settings.slider_x1 - 5)\
-                        and pg.mouse.get_pos()[0] < (settings.slider_x1 + 15)\
-                        and pg.mouse.get_pos()[1] > settings.slider_y1\
-                        and pg.mouse.get_pos()[1] < settings.slider_y1 + 20:
+                    # update_planets_size(screen, settings, settings.follow_koef)
+            if settings.slider_x1 - 55 < pg.mouse.get_pos()[0] < settings.slider_x1 + 65\
+                    and settings.slider_y1 - 10 < pg.mouse.get_pos()[1] < settings.slider_y1 + 30:
                 settings.slider_hold = True
-            elif pg.mouse.get_pos()[0] > (settings.size_slider_x)\
-                    and pg.mouse.get_pos()[0] < (settings.size_slider_x + 20)\
-                    and pg.mouse.get_pos()[1] > settings.size_slider_y - 5\
-                    and pg.mouse.get_pos()[1] < settings.size_slider_y + 15:
+            elif settings.size_slider_x - 10 < pg.mouse.get_pos()[0] < settings.size_slider_x + 30\
+                    and settings.size_slider_y - 25 < pg.mouse.get_pos()[1] < settings.size_slider_y + 35:
                 settings.size_slider_y_hold = True
-
 
     """Правая кнопка мыши"""
     if event.button == 3:
         if settings.click == -1:
             if settings.size_koef >= settings.max_size_koef:
                 check = True
-            else: check = False
-
+            else:
+                check = False
+            settings.object_planets[settings.follow_koef].planet_img\
+                = pg.transform.scale(settings.planets_img[settings.follow_koef], (2, 2))
             settings.follow_koef += 1
 
             if settings.follow_koef > 8:
                 settings.follow_koef = 0
 
             settings.max_size_koef =\
-                            settings.max_size_koef_arr[settings.follow_koef]
+                settings.max_size_koef_arr[settings.follow_koef]
 
             if settings.size_koef > settings.max_size_koef or check == True:
                 settings.size_koef = settings.max_size_koef
 
-            update_planets_size(screen, settings, settings.follow_koef)
+            # update_planets_size(screen, settings, settings.follow_koef)
 
         elif settings.click != -1:
 
@@ -1473,8 +1661,8 @@ def check_mouse_events(screen, settings, event):
                 i.staying = random.randint(1, settings.staying_dots_part)
 
                 if i.dark_whole == -1 and i.staying == 1\
-                                and sum(settings.staying_dots) <\
-                                settings.dot_num//settings.staying_dots_part:
+                    and sum(settings.staying_dots) <\
+                        settings.dot_num // settings.staying_dots_part:
                     i.staying_arg = 1
                     i.speed_x = 0
                     i.speed_y = 0
@@ -1482,7 +1670,6 @@ def check_mouse_events(screen, settings, event):
                     i.staying_arg = 0
 
                 settings.staying_dots.append(i.staying_arg)
-
 
     """Колесико мыши вверх"""
     if event.button == 4:
@@ -1504,7 +1691,6 @@ def check_mouse_events(screen, settings, event):
         else:
             for i in settings.obj_dot_hole:
                 i.zoom_on(settings.size_koef, settings.max_size_koef)
-
 
             if settings.size_koef < settings.max_size_koef:
                 check = True
@@ -1541,26 +1727,36 @@ def check_mouse_events(screen, settings, event):
             if settings.size_koef != 14 and check == True:
 
                 update_planets_size(screen, settings)
-                settings.new_x_for_planets =\
-                                settings.object_planets[settings.follow_koef].x
-                settings.new_y_for_planets =\
-                                settings.object_planets[settings.follow_koef].y
-                update_planets_cors(screen, settings)
-
+                # settings.new_x_for_planets =\
+                #     settings.object_planets[settings.follow_koef].x
+                # settings.new_y_for_planets =\
+                #     settings.object_planets[settings.follow_koef].y
+                # update_planets_cors(screen, settings)
 
     """Колесико мыши вниз"""
     if event.button == 5:
         if settings.sun_system_koef == 1:
             if settings.speed_hole_koef != 0.01:
-                settings.max_speed = 10000
-                settings.min_speed = 100000
+                # settings.max_speed = 10000
+                # settings.min_speed = 100000
+                #
+                # settings.speed_hole_koef = 0.01
+                #
+                # settings.tors_speed_koef = 200000
+                #
+                # settings.whole_speed_max = 5000
+                # settings.whole_speed_min = 500000000
+                # restart_moving(screen, settings)
 
-                settings.speed_hole_koef = 0.01
+                settings.max_speed = 100
+                settings.min_speed = 5000
 
-                settings.tors_speed_koef = 200000
+                settings.speed_hole_koef = 0.1
 
-                settings.whole_speed_max = 5000
-                settings.whole_speed_min = 500000000
+                settings.tors_speed_koef = 10000
+
+                settings.whole_speed_max = 100
+                settings.whole_speed_min = 1000
                 restart_moving(screen, settings)
 
         else:
@@ -1570,39 +1766,36 @@ def check_mouse_events(screen, settings, event):
                 settings.size_koef -= 5
 
             if settings.size_koef >= 10:
-                settings.size_koef  -= 2
+                settings.size_koef -= 2
 
             if settings.size_koef >= 6:
-                settings.size_koef  -= 1
+                settings.size_koef -= 1
 
             elif settings.size_koef >= 4:
                 settings.size_koef -= 0.25
 
             elif settings.size_koef >= 1:
-                settings.size_koef  -= 0.2
+                settings.size_koef -= 0.2
 
             elif settings.size_koef >= 0.1:
                 settings.size_koef -= 0.03
 
-            elif settings.size_koef >= 0.01:
+            elif settings.size_koef >= 0.015:
                 settings.size_koef -= 0.006
 
-            if settings.size_koef - 0.01 == 0:
-                settings.size_koef = 0.01
+            if settings.size_koef - 0.015 <= 0:
+                settings.size_koef = 0.015
 
-
-            update_planets_size(screen, settings)
-            settings.new_x_for_planets =\
-                                settings.object_planets[settings.follow_koef].x
-            settings.new_y_for_planets =\
-                                settings.object_planets[settings.follow_koef].y
-            update_planets_cors(screen, settings)
-
+            # update_planets_size(screen, settings)
+            # settings.new_x_for_planets =\
+            #     settings.object_planets[settings.follow_koef].x
+            # settings.new_y_for_planets =\
+            #     settings.object_planets[settings.follow_koef].y
+            # update_planets_cors(screen, settings)
 
     """Нажатие на колесико мыши"""
     if event.button == 2:
         settings.time_hold = time.perf_counter()
-
 
         """
         if settings.sun_system_koef == -1:
@@ -1615,13 +1808,14 @@ def check_mouse_events(screen, settings, event):
 
 
 """Функция для изменения системы (на черную дыру или солнечную)"""
+
+
 def change_system(screen, settings):
     settings.click *= -1
     if settings.click == -1:
         pg.mouse.set_visible(True)
     elif settings.click == 1:
         pg.mouse.set_visible(True)
-
 
     settings.sun_system_koef *= -1
 
@@ -1631,8 +1825,8 @@ def change_system(screen, settings):
     else:
         dot_init(settings, screen)
 
-        dark_dot = pg.draw.circle(screen, (0,0,0),
-                    (settings.gravity_point_x, settings.gravity_point_y), 10)
+        dark_dot = pg.draw.circle(screen, (0, 0, 0),
+                                  (settings.gravity_point_x, settings.gravity_point_y), 10)
 
         for i in settings.object_dot:
             i.draw_dot()
@@ -1640,7 +1834,10 @@ def change_system(screen, settings):
                 settings.object_dot.remove(i)
                 create_dot(screen, settings)
 
+
 """проверка всех событий"""
+
+
 def check_events(screen, settings):
     for event in pg.event.get():
         if event.type == pg.MOUSEMOTION:
@@ -1648,78 +1845,64 @@ def check_events(screen, settings):
             width = settings.screen_width
             height = settings.screen_height
 
-            if pg.mouse.get_pos()[0] > width - 60\
-                        and pg.mouse.get_pos()[0] < width - 30\
-                        and pg.mouse.get_pos()[1] > height - 35\
-                        and pg.mouse.get_pos()[1] < height:
+            if width - 60 < pg.mouse.get_pos()[0] < width - 30\
+                    and height - 35 < pg.mouse.get_pos()[1] < height:
                 settings.lang_hover_on = 0
-            elif pg.mouse.get_pos()[0] > width - 30\
-                        and pg.mouse.get_pos()[0] < width\
-                        and pg.mouse.get_pos()[1] > height - 35\
-                        and pg.mouse.get_pos()[1] < height:
-                 settings.lang_hover_on = 1
-            else: settings.lang_hover_on = 2
+            elif width - 30 < pg.mouse.get_pos()[0] < width\
+                    and height - 35 < pg.mouse.get_pos()[1] < height:
+                settings.lang_hover_on = 1
+            else:
+                settings.lang_hover_on = 2
 
-            if pg.mouse.get_pos()[0] > settings.screen_width - 200\
-                        and pg.mouse.get_pos()[0] < settings.screen_width -170\
-                        and pg.mouse.get_pos()[1] < 50 \
-                        and pg.mouse.get_pos()[1] > 30:
+            if settings.screen_width - 215 < pg.mouse.get_pos()[0] <= settings.screen_width - 155\
+                    and 30 < pg.mouse.get_pos()[1] < 50:
                 settings.hover_on = 0
 
-            elif pg.mouse.get_pos()[0] > settings.screen_width - 140\
-                        and pg.mouse.get_pos()[0] < settings.screen_width -110\
-                        and pg.mouse.get_pos()[1] < 50\
-                        and pg.mouse.get_pos()[1] > 30:
+            elif settings.screen_width - 155 < pg.mouse.get_pos()[0] <= settings.screen_width - 95\
+                    and 30 < pg.mouse.get_pos()[1] < 50:
                 settings.hover_on = 1
 
-            elif pg.mouse.get_pos()[0] > settings.screen_width - 80\
-                        and pg.mouse.get_pos()[0] < settings.screen_width -40\
-                        and pg.mouse.get_pos()[1] < 50\
-                        and pg.mouse.get_pos()[1] > 30:
+            elif settings.screen_width - 95 < pg.mouse.get_pos()[0] <= settings.screen_width - 25\
+                    and 30 < pg.mouse.get_pos()[1] < 50:
                 settings.hover_on = 2
             else:
                 settings.hover_on = -1
 
-
-            if pg.mouse.get_pos()[0] > settings.screen_width - 35\
-                        and  pg.mouse.get_pos()[0] < settings.screen_width -5\
-                        and pg.mouse.get_pos()[1] < 35 \
-                        and pg.mouse.get_pos()[1] > 5:
+            if settings.screen_width - 35 < pg.mouse.get_pos()[0] < settings.screen_width - 5\
+                    and 5 < pg.mouse.get_pos()[1] < 35:
                 settings.settings_frame = True
             elif settings.settings_frame == True\
-                        and pg.mouse.get_pos()[0] > settings.screen_width -250\
-                        and  pg.mouse.get_pos()[0] < settings.screen_width -5\
-                        and pg.mouse.get_pos()[1] < 55 \
-                        and pg.mouse.get_pos()[1] > 5:
+                    and settings.screen_width - 250 < pg.mouse.get_pos()[0]\
+                    and pg.mouse.get_pos()[1] < 55:
                 settings.settings_frame = True
             else:
                 settings.settings_frame = False
 
             if settings.hint:
                 if pg.mouse.get_pos()[0] > 250 and pg.mouse.get_pos()[0] < 450\
-                                                and pg.mouse.get_pos()[1] > 20\
-                                                and pg.mouse.get_pos()[1] < 70:
+                        and pg.mouse.get_pos()[1] > 20\
+                        and pg.mouse.get_pos()[1] < 70:
                     settings.hint_solar = True
                 else:
                     settings.hint_solar = False
 
                 if pg.mouse.get_pos()[0] > 40 and pg.mouse.get_pos()[0] < 230\
-                                                and pg.mouse.get_pos()[1] > 20\
-                                                and pg.mouse.get_pos()[1] < 70:
+                        and pg.mouse.get_pos()[1] > 20\
+                        and pg.mouse.get_pos()[1] < 70:
                     settings.hint_hole = True
                 else:
                     settings.hint_hole = False
 
             if pg.mouse.get_pos()[0] > 10 and pg.mouse.get_pos()[0] < 35\
-                                                and pg.mouse.get_pos()[1] > 10\
-                                                and pg.mouse.get_pos()[1] < 35:
+                    and pg.mouse.get_pos()[1] > 10\
+                    and pg.mouse.get_pos()[1] < 35:
                 settings.question_img.set_alpha(60)
             else:
                 settings.question_img.set_alpha(240)
 
             if pg.mouse.get_pos()[0] > 13 and pg.mouse.get_pos()[0] < 35\
-                                                and pg.mouse.get_pos()[1] > 13\
-                                                and pg.mouse.get_pos()[1] < 35:
+                    and pg.mouse.get_pos()[1] > 13\
+                    and pg.mouse.get_pos()[1] < 35:
                 settings.hint = True
 
             if pg.mouse.get_pos()[1] > 110 or pg.mouse.get_pos()[0] > 510:
@@ -1752,22 +1935,26 @@ def check_events(screen, settings):
                         settings.whole_speed_min = 1000
                         restart_moving(screen, settings)
 
-        ###Событие нажатие мыши
+        # Событие нажатие мыши
         if event.type == pg.MOUSEBUTTONDOWN:
             check_mouse_events(screen, settings, event)
 
-        ###Событие нажание крестика
+        # Событие нажание крестика
         if event.type == pg.QUIT:
             print(len(settings.object_dot))
             sys.exit()
-        ###Событие нажатие на клавишу клавиатуры
+        # Событие нажатие на клавишу клавиатуры
         elif event.type == pg.KEYDOWN:
             if settings.sun_system_koef == -1:
 
                 if settings.size_koef >= settings.max_size_koef:
                     check = True
-                else: check = False
+                else:
+                    check = False
 
+                def u_s_p(settings_frame):
+                    settings.object_planets[settings.follow_koef].planet_img\
+                        = pg.transform.scale(settings.planets_img[settings.follow_koef], (2, 2))
 
                 if event.key == pg.K_0:
                     # settings.zoom_speed = 0.05
@@ -1777,62 +1964,66 @@ def check_events(screen, settings):
                     # settings.max_size_koef = 6
 
                 elif event.key == pg.K_1:
+                    u_s_p(settings)
                     settings.follow_koef = 1
 
                 elif event.key == pg.K_2:
+                    u_s_p(settings)
                     settings.follow_koef = 2
 
                 elif event.key == pg.K_3:
+                    u_s_p(settings)
                     settings.follow_koef = 3
 
                 elif event.key == pg.K_4:
+                    u_s_p(settings)
                     settings.follow_koef = 4
 
                 elif event.key == pg.K_5:
+                    u_s_p(settings)
                     settings.follow_koef = 5
 
                 elif event.key == pg.K_6:
+                    u_s_p(settings)
                     settings.follow_koef = 6
 
                 elif event.key == pg.K_7:
+                    u_s_p(settings)
                     settings.follow_koef = 7
 
                 elif event.key == pg.K_8:
+                    u_s_p(settings)
                     settings.follow_koef = 8
 
-
                 settings.max_size_koef =\
-                            settings.max_size_koef_arr[settings.follow_koef]
+                    settings.max_size_koef_arr[settings.follow_koef]
+
                 # settings.size_num = settings.max_size_koef_arr[settings.follow_koef]
 
-                update_planets_size(screen, settings, settings.follow_koef)
+                # update_planets_size(screen, settings, settings.follow_koef)
 
-                if settings.size_koef > settings.max_size_koef or check==True:
+                if settings.size_koef >= settings.max_size_koef or check == True:
                     settings.size_koef = settings.max_size_koef
-
-                    update_planets_size(screen, settings, settings.follow_koef)
+                # update_planets_size(screen, settings, settings.follow_koef)
 
                 keys = pg.key.get_pressed()
 
                 if keys[pg.K_b] and keys[pg.K_r] and keys[pg.K_d]\
-                                                    and keys[pg.K_LALT]:
+                        and keys[pg.K_LALT]:
                     if settings.red_border:
                         settings.red_border = False
-                        update_planets_size(screen, settings, 'all')
+                        # update_planets_size(screen, settings, 'all')
 
                     else:
                         settings.red_border = True
-                        update_planets_size(screen, settings, 'all')
-
-
-
+                        # update_planets_size(screen, settings, 'all')
 
             """Проверка для выхода из проги"""
             if event.key == pg.K_ESCAPE:
                 print('\n')
                 print('Size koef. : ' + str(settings.size_koef))
-                print('Num of the dots (solar system) = '\
-                                            + str(len(settings.obj_dot_hole)))
+                print('Num of the dots (solar system) = '
+                      + str(len(settings.obj_dot_hole)))
                 sys.exit()
 
             keys = pg.key.get_pressed()
@@ -1894,9 +2085,14 @@ import random
 import math as m
 
 """Класс планет солнечной системы"""
+
+
 class Planets():
     """Инициализация класса планет солнечной системы"""
+
     def __init__(self, settings, screen, i):
+        self.omg = 1
+        self.kek = 1
 
         self.screen = screen
         self.settings = settings
@@ -1927,89 +2123,155 @@ class Planets():
             self.arr_dot_pos.append(self.pos_dot)
 
         self.planet_img = pg.transform.scale(self.settings.planets_img[self.i],
-        (self.settings.planets_rad[self.i], self.settings.planets_rad[self.i]))
+                                             (self.settings.planets_rad[self.i], self.settings.planets_rad[self.i]))
+        if self.i in self.settings.salt_info.keys():
+
+            print(self.settings.salt_info.keys())
+            self.salt_info = self.settings.salt_info[self.i]
+
+            self.salt_speed = self.salt_info["speed"]
+            self.salt_a = self.salt_info["a"]
+            self.salt_b = self.salt_info["b"]
+            self.salt_rad = self.salt_info["rad"]
+            self.salt_pos = self.salt_info["pos"]
+            self.salt_img = self.salt_info["img"]
+
+        self.shadow = pg.Rect(self.x, self.y,
+                              self.settings.planets_rad[self.i] *
+                              self.settings.size_koef * 3,
+                              self.settings.planets_rad[self.i] * self.settings.size_koef * 3)
 
     """Функция отображения картинок планет"""
+
     def draw_planets(self):
-        self.planet = self.screen.blit(self.planet_img, (self.x, self.y))
+        if self.settings.size_koef < 0.05:
+            pg.draw.circle(self.screen, (200, 200, 200),
+                           (int(self.x + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef),
+                            int(self.y + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef)),
+                           int((self.settings.planets_rad[self.i] // 2) * self.settings.size_koef))
+
+        if self.i in self.settings.salt_info.keys():
+            for k in range(len(self.salt_speed)):
+                self.s_a = self.salt_a[k] * self.settings.size_koef
+                self.s_b = self.salt_b[k] * self.settings.size_koef
+                self.r = self.settings.planets_rad[self.i] * \
+                    self.settings.size_koef
+
+                self.l = self.t + self.salt_pos[k]
+                #
+                # self.a_t, self.b_t = 100 * self.settings.size_koef, 50 * self.settings.size_koef
+                self.x_t = int(self.s_a * m.sin(self.v *
+                                                self.l * self.salt_speed[k]) + self.x + self.r // 2)
+                self.y_t = int(self.s_b * m.cos(self.v *
+                                                self.l * self.salt_speed[k]) + self.y + self.r // 2)
+
+                self.rad_t = self.salt_rad[k] * self.settings.size_koef
+
+                if self.rad_t < 1:
+                    self.rad_t = 0.5
+
+                self.im = pg.transform.scale(
+                    self.salt_img[k], (int(self.rad_t * 4), int(self.rad_t * 4)))
+
+                if self.salt_rad[k] != 0:
+                    self.screen.blit(self.im, (self.x_t, self.y_t))
+                else:
+                    if self.settings.size_koef > 0.12:
+                        pg.draw.circle(self.screen, (255, 250, 255),
+                                       (self.x_t, self.y_t), 0)
+        self.planet = self.screen.blit(
+            self.planet_img, (self.x, self.y))
 
     # def update_lines(self):
-    #     self.line = pg.draw.line(self.screen, (50, 50,50),
-    #     [self.x + self.settings.planets_rad[self.i]//2*self.settings.size_koef,
-    #     self.y + self.settings.planets_rad[self.i]//2*self.settings.size_koef],
-    #     [self.settings.middle[0], self.settings.middle[1]])
+    #     self.line = pg.draw.line(self.screen, (50, 50, 50),
+    #                              [self.x + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef,
+    #                               self.y + self.settings.planets_rad[self.i] // 2 * self.settings.size_koef],
+    #                              [self.settings.middle[0], self.settings.middle[1]])
 
     """Функция отображения границ планет"""
+
     def draw_planets_rect(self):
         border_color = (255 * self.settings.red_border, 0, 0)
 
-        self.shadow = pg.draw.rect(self.screen, border_color, [self.x, self.y,
-        self.settings.planets_rad[self.i] * self.settings.size_koef,
-        self.settings.planets_rad[self.i] * self.settings.size_koef], 1)
+        # self.shadow = pg.draw.rect(self.screen, border_color, [self.x, self.y,
+        #                                                        self.settings.planets_rad[self.i] *
+        #                                                        self.settings.size_koef,
+        #                                                        self.settings.planets_rad[self.i] * self.settings.size_koef], 1)
+        self.shadow = pg.Rect(self.x, self.y,
+                              self.settings.planets_rad[self.i] *
+                              self.settings.size_koef * 3,
+                              self.settings.planets_rad[self.i] * self.settings.size_koef * 3)
         self.dot_color = 150
 
         for k in range(10):
             pg.draw.circle(self.screen, (self.dot_color,
-                    self.dot_color,self.dot_color), self.arr_dot_pos[k], 0)
+                                         self.dot_color, self.dot_color), self.arr_dot_pos[k], 0)
 
             self.dot_color -= 15
     # def draw_ellipse(self):
 
         # Отображение линий к центру в режиме разработчика
         if self.settings.red_border:
-            self.line = pg.draw.line(self.screen, (0, 200,0),
-            [self.x + self.settings.planets_rad[self.i]\
-                                                //2*self.settings.size_koef,
-            self.y + self.settings.planets_rad[self.i]\
-                                                //2*self.settings.size_koef],
-            [self.settings.middle[0], self.settings.middle[1]])
-
+            self.line = pg.draw.line(self.screen, (0, 200, 0),
+                                     [self.x + self.settings.planets_rad[self.i]
+                                      // 2 * self.settings.size_koef,
+                                      self.y +
+                                      self.settings.planets_rad[self.i]
+                                      // 2 * self.settings.size_koef],
+                                     [self.settings.middle[0], self.settings.middle[1]])
 
     """Функция обновления положения планет"""
+
     def update(self):
 
+        if self.i == 3:
+            if self.r and self.x > self.settings.middle[0]\
+                    and self.y < self.settings.middle[1]:
+                self.r = False
 
-        # if self.i == 3:
-        #     if self.r and self.x > self.settings.middle[0]\
-        #                 and self.y < self.settings.middle[1]:
-        #         self.r = False
-        #         self.settings.solar_time -= 1
-        #     elif self.r and self.x > self.settings.middle[0]\
-        #                 and self.y > self.settings.middle[1]:
-        #         self.r = False
-        #         self.settings.solar_time += 1
-        #     elif not self.r and self.x < self.settings.middle[0]:
-        #         self.r = True
+            elif self.r and self.x > self.settings.middle[0]\
+                    and self.y > self.settings.middle[1]:
+                self.r = False
+                # self.settings.solar_time += 1
+                self.settings.solar_time = 1982 + round(self.t / 34)
+                # print(round(self.t / 34))
+                # print(1982 - self.settings.solar_time)
 
-        self.a = (self.settings.planets_x[self.i]\
-            + self.settings.planets_heights[self.i]) * self.settings.size_koef
+            elif not self.r and self.x < self.settings.middle[0]:
+                if self.y > self.settings.middle[1]:
+                    # self.settings.solar_time -= 1
+                    self.settings.solar_time = 1982 + round(self.t / 34)
+
+                self.r = True
+
+        self.a = (self.settings.planets_x[self.i]
+                  + self.settings.planets_heights[self.i]) * self.settings.size_koef
 
         self.b = (self.settings.planets_heights[self.i])\
-                                                * self.settings.size_koef * 2
+            * self.settings.size_koef * 2
 
         if self.i != 0:
-            self.x_cor = self.a*m.sin(self.v*self.t) + self.x_0
-            self.y_cor = self.b*m.cos(self.v*self.t) + self.y_0
-
+            self.x_cor = self.a * m.sin(self.v * self.t) + self.x_0
+            self.y_cor = self.b * m.cos(self.v * self.t) + self.y_0
 
             try:
                 minus = 0.15 / self.v
 
                 for k in range(10):
-                    self.dot_x_cor = self.a*m.sin(self.v*(self.t-minus))\
-                                + self.x_0 + self.settings.planets_rad[self.i]\
-                                //2*self.settings.size_koef
+                    self.dot_x_cor = self.a * m.sin(self.v * (self.t - minus))\
+                        + self.x_0 + self.settings.planets_rad[self.i]\
+                        // 2 * self.settings.size_koef
 
-                    self.dot_y_cor = self.b*m.cos(self.v*(self.t-minus))\
-                                + self.y_0 + self.settings.planets_rad[self.i]\
-                                //2*self.settings.size_koef
+                    self.dot_y_cor = self.b * m.cos(self.v * (self.t - minus))\
+                        + self.y_0 + self.settings.planets_rad[self.i]\
+                        // 2 * self.settings.size_koef
 
                     self.pos_dot = (int(self.dot_x_cor), int(self.dot_y_cor))
 
                     self.arr_dot_pos[k] = self.pos_dot
                     minus += 0.1 / self.v
-            except: None
-
+            except:
+                None
 
             if self.settings.freeze_speed == 0:
                 self.t += 0.01
@@ -2021,26 +2283,26 @@ class Planets():
             self.settings.planets_y_cors[self.i] = self.y
         else:
             self.x = self.x_0 - self.settings.planets_rad[0]\
-                                                    *self.settings.size_koef//2
+                * self.settings.size_koef // 2
             self.y = self.y_0 - self.settings.planets_rad[0]\
-                                                    *self.settings.size_koef//2
+                * self.settings.size_koef // 2
 
             self.settings.planets_x_cors[self.i] = self.x
             self.settings.planets_y_cors[self.i] = self.y
 import random
 import pygame as pg
 
+
 class Settings():
     def __init__(self, screen_width, screen_height):
-
         """BLACK HOLE SETTINGS"""
         self.tors_allowed = True
         self.hint = False
-  
+
         self.hint_alpha = 0
         self.text_alpha = 0
 
-        self.dot_color = 255,255,255
+        self.dot_color = 255, 255, 255
 
         self.object_dot = []
         self.staying_dots = []
@@ -2050,7 +2312,7 @@ class Settings():
 
         self.speed_hole_koef = 1
 
-        self.dark_hole_speed= [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1],
+        self.dark_hole_speed = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1],
                                 [-1, -1], [0, 0]]
         self.whole_speed_max = 5
         self.whole_speed_min = 40
@@ -2098,7 +2360,6 @@ class Settings():
         """
         # screen.blit(self.fon_surf, self.fon)
 
-
         """SOLAR SYSTEM SETTINGS"""
         self.size_koef = 1
         self.size_num = 1
@@ -2113,9 +2374,8 @@ class Settings():
             self.planets_x_cors.append(0)
             self.planets_y_cors.append(0)
 
-        self.dots_colors = [(255, 180, 180), (255,255,255), (180, 180, 255),
-                                            (255, 255, 180), (255, 180, 255)]
-
+        self.dots_colors = [(255, 180, 180), (255, 255, 255), (180, 180, 255),
+                            (255, 255, 180), (255, 180, 255)]
         self.fps = 0
 
         self.time_1 = 0
@@ -2130,9 +2390,10 @@ class Settings():
         self.lang_txt_change = 0
         self.files_types = ['_eng', '_ru']
 
-        self.all_text = [[],[]]
+        self.all_text = [[], []]
         for k in range(2):
-            self.all_txt=open('text/all_text'+self.files_types[k]+'.txt','r')
+            self.all_txt = open(
+                'text/all_text' + self.files_types[k] + '.txt', 'r')
             self.all_txt = self.all_txt.read().split('|')
             self.all_text[k] = self.all_txt
         print(self.all_text)
@@ -2140,7 +2401,8 @@ class Settings():
         # Текст с описанием всех планет солнечной системы, включая солнце
         self.text_planets = []
         for k in range(2):
-            self.file=open('text/text_planets'+self.files_types[k]+'.txt','r')
+            self.file = open('text/text_planets' +
+                             self.files_types[k] + '.txt', 'r')
             self.text_planets.append(self.file.read().split('|'))
             self.file.close()
         self.text_arr = self.text_planets[0]
@@ -2148,7 +2410,8 @@ class Settings():
         # Текс помощи для управления черной дырой
         self.hole_hint_txt = []
         for k in range(2):
-            self.file = open('text/hint_hole'+self.files_types[k]+'.txt','r')
+            self.file = open('text/hint_hole' +
+                             self.files_types[k] + '.txt', 'r')
             self.hole_hint_txt.append(self.file.read())
             self.file.close()
         self.text_hole = self.hole_hint_txt[self.lang_txt_change]
@@ -2156,7 +2419,8 @@ class Settings():
         # Текс помощи для управления солнечной системой
         self.solar_hint_txt = []
         for k in range(2):
-            self.file = open('text/hint_solar'+self.files_types[k]+'.txt','r')
+            self.file = open('text/hint_solar' +
+                             self.files_types[k] + '.txt', 'r')
             self.solar_hint_txt.append(self.file.read())
             self.file.close()
         self.text_solar = self.solar_hint_txt[self.lang_txt_change]
@@ -2177,20 +2441,20 @@ class Settings():
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.middle = [self.screen_width//2, self.screen_height//2]
+        self.middle = [self.screen_width // 2, self.screen_height // 2]
 
         self.new_x_for_planets = self.middle[0]
         self.new_y_for_planets = self.middle[1]
 
         self.follow_koef = 0
 
-        self.max_size_koef_arr = [4, 35, 20, 20, 35, 6, 4.4, 10, 10]
+        self.max_size_koef_arr = [4, 90, 40, 40, 70, 10, 10, 20, 20]
 
         for k in range(len(self.max_size_koef_arr)):
             self.max_size_koef_arr[k] /= 2
 
         self.x_speed = 0.3
-        self.y_speed = 0
+        self.y_speed = 0.3
 
         self.change_speed_counter = 0
 
@@ -2203,11 +2467,11 @@ class Settings():
         self.hover_on = -1
         self.heights = [0, 0, 0]
         self.x_points = [self.screen_width - 200,
-                                self.screen_width - 170,
-                                self.screen_width - 140,
-                                self.screen_width - 110,
-                                self.screen_width - 80,
-                                self.screen_width - 40]
+                         self.screen_width - 170,
+                         self.screen_width - 140,
+                         self.screen_width - 110,
+                         self.screen_width - 80,
+                         self.screen_width - 40]
 
         self.gravity_point_x = self.hole_x
         self.gravity_point_y = self.hole_y
@@ -2223,7 +2487,7 @@ class Settings():
 
         self.solar_time = 1982
 
-        #Sun System settings
+        # Sun System settings
         self.dot_hole_num = 400
         self.obj_dot_hole = []
         self.sun_system_koef = 1
@@ -2233,7 +2497,7 @@ class Settings():
         self.slider_y1 = int(self.screen_height - 50)
         self.slider_hold = False
 
-        self.size_slider_y = self.screen_height//2
+        self.size_slider_y = self.screen_height // 2
         self.size_slider_x = self.screen_width - 40
 
         self.size_slider_y_hold = False
@@ -2244,8 +2508,20 @@ class Settings():
 
         self.update_size_moving = False
         self.max_size_koef = self.max_size_koef_arr[0]
-        #plsnets of the sun system settings
-        self.planets_speed = [0, 2, 1.6, 1.25, 1, 0.54, 0.4, 0.29, 0.2]
+        # plsnets of the sun system settings
+        # Sun Mercury Venus Earth Mars Jupyter Saturn Uranus Neptun
+        earth_speed = 1
+        self.planets_speed = [
+            0,  # The Sun
+            365 / 88 * earth_speed,  # Mercury
+            365 / 225 * earth_speed,  # Venus
+            earth_speed,  # Earth
+            365 / 687 * earth_speed,  # Mars
+            earth_speed / 12,  # Jupyter
+            earth_speed / 29,  # Saturn
+            earth_speed / 84,  # Uranus
+            earth_speed / 165  # Neptune
+        ]
         for k in range(len(self.planets_speed)):
             self.planets_speed[k] *= self.speed_of_mooving_koef
         print(self.planets_speed)
@@ -2259,7 +2535,7 @@ class Settings():
         for k in range(len(self.planets_heights)):
             self.planets_heights[k] *= 2
         self.planets_names = ['Sun', 'Mercury', 'Venus', 'Earth', 'Mars',
-                                'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+                              'Jupiter', 'Saturn', 'Uranus', 'Neptune']
         self.planets_img = []
         self.object_planets = []
         self.planets_rad = []
@@ -2267,12 +2543,12 @@ class Settings():
         self.planets_y = []
 
         """Sun settings"""
-        self.sun_rad = int(200*self.size_koef)
+        self.sun_rad = int(200 * self.size_koef)
 
         self.sun_rad_koef = self.sun_rad / 100
 
-        self.sun_x_cor = self.screen_width // 2 - self.sun_rad//2
-        self.sun_y_cor = self.screen_height // 2 - self.sun_rad//2
+        self.sun_x_cor = self.screen_width // 2 - self.sun_rad // 2
+        self.sun_y_cor = self.screen_height // 2 - self.sun_rad // 2
 
         self.planets_x.append(self.sun_x_cor)
         self.planets_y.append(self.sun_y_cor)
@@ -2285,11 +2561,11 @@ class Settings():
         self.planets_img.append(self.sun_img)
 
         """Mercury settings"""
-        self.planets_rad.append(self.sun_rad//16)
+        self.planets_rad.append(self.sun_rad // 72)
 
         self.planet_x_cor = self.sun_x_cor + 100
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
-
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2301,10 +2577,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Venus settings"""
-        self.planets_rad.append(self.sun_rad//8)
+        self.planets_rad.append(self.sun_rad // 28.8)
 
         self.planet_x_cor = self.sun_x_cor + 188
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2316,10 +2593,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Earth settings"""
-        self.planets_rad.append(self.sun_rad//8)
+        self.planets_rad.append(self.sun_rad // 27.7)
 
         self.planet_x_cor = self.sun_x_cor + 260
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2331,10 +2609,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Mars settings"""
-        self.planets_rad.append(self.sun_rad//14)
+        self.planets_rad.append(self.sun_rad // 51.4)
 
         self.planet_x_cor = self.sun_x_cor + 395
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2346,10 +2625,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Jupiter settings"""
-        self.planets_rad.append(self.sun_rad - self.sun_rad // 2)
+        self.planets_rad.append(self.sun_rad // 2.5)
 
         self.planet_x_cor = self.sun_x_cor + 1353
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2361,10 +2641,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Saturn settings"""
-        self.planets_rad.append(int((self.sun_rad - self.sun_rad // 2.5)*1.1))
+        self.planets_rad.append(self.sun_rad // 3.3)
 
         self.planet_x_cor = self.sun_x_cor + 2484
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2376,10 +2657,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Uranus settings"""
-        self.planets_rad.append(self.sun_rad//4)
+        self.planets_rad.append(self.sun_rad // 6.8)
 
         self.planet_x_cor = self.sun_x_cor + 4990
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2391,10 +2673,11 @@ class Settings():
         self.planets_img.append(self.planet_img)
 
         """Neptune settings"""
-        self.planets_rad.append(self.sun_rad//4)
+        self.planets_rad.append(self.sun_rad // 10)
 
         self.planet_x_cor = self.sun_x_cor + 7831
-        self.planet_y_cor = self.screen_height//2 - self.planets_rad[self.i]//2
+        self.planet_y_cor = self.screen_height // 2 - \
+            self.planets_rad[self.i] // 2
 
         self.planets_x.append(self.planet_x_cor)
         self.planets_y.append(self.planet_y_cor)
@@ -2408,9 +2691,171 @@ class Settings():
         for k in range(len(self.planets_rad)):
             self.planets_rad[k] *= 2
 
+        self.planets_rad = [*map(int, self.planets_rad)]
+
+        for k in range(len(self.planets_img)):
+            self.planets_img[k] = pg.transform.scale(
+                self.planets_img[k],
+                (
+                    int(self.planets_rad[k] * self.max_size_koef_arr[k]),
+                    int(self.planets_rad[k] * self.max_size_koef_arr[k])
+                ))
+
+        print(self.planets_rad)
 
         """Asteroids"""
         self.arr_astro = []
-        self.astro_num = 200
+        self.astro_num = 300
 
         self.astro_img = pg.image.load("img/meteor.png").convert_alpha()
+        # self.astro_img = pg.transform.scale(self.astro_img, (3, 3))
+
+        """Satellite"""
+        self.salt_info =\
+            {
+                3: {},
+                5: {},
+                6: {},
+                7: {},
+                8: {}
+            }
+
+        for k in self.salt_info.keys():
+            self.salt_info[k]["speed"] = []
+            self.salt_info[k]["a"] = []
+            self.salt_info[k]["b"] = []
+            self.salt_info[k]["rad"] = []
+            self.salt_info[k]["pos"] = []
+            self.salt_info[k]["img"] = []
+
+        """Earth"""
+        """The Moon"""
+        d_s = 100
+
+        self.salt_info[3]["speed"].append(13)
+        self.salt_info[3]["a"].append(d_s)
+        self.salt_info[3]["b"].append(d_s)
+        self.salt_info[3]["rad"].append(self.sun_rad // 108)
+        self.salt_info[3]["pos"].append(random.randint(0, 1000))
+        self.salt_info[3]["img"].append(
+            pg.image.load("img/moon.png").convert_alpha())
+
+        """Jupyter"""
+        """IO"""
+        self.salt_info[5]["speed"].append(17.334 / 13.07 * 12)
+        self.salt_info[5]["a"].append(d_s)
+        self.salt_info[5]["b"].append(d_s)
+        self.salt_info[5]["rad"].append(self.sun_rad // 108)
+        self.salt_info[5]["pos"].append(random.randint(0, 1000))
+        self.salt_info[5]["img"].append(
+            pg.image.load("img/io.jpg").convert_alpha())
+
+        """Europ"""
+        self.salt_info[5]["speed"].append(13.74 / 13.07 * 12)
+        self.salt_info[5]["a"].append(1.5 * d_s)
+        self.salt_info[5]["b"].append(1.5 * d_s)
+        self.salt_info[5]["rad"].append(self.sun_rad // 55)
+        self.salt_info[5]["pos"].append(random.randint(0, 1000))
+        self.salt_info[5]["img"].append(
+            pg.image.load("img/europ.jpg").convert_alpha())
+
+        """Ganimed"""
+        self.salt_info[5]["speed"].append(10.88 / 13.07 * 12)
+        self.salt_info[5]["a"].append(2.5 * d_s)
+        self.salt_info[5]["b"].append(2.5 * d_s)
+        self.salt_info[5]["rad"].append(self.sun_rad // 74)
+        self.salt_info[5]["pos"].append(random.randint(0, 1000))
+        self.salt_info[5]["img"].append(
+            pg.image.load("img/ganimed.jpg").convert_alpha())
+
+        """Kallisto"""
+        self.salt_info[5]["speed"].append(8.2 / 13.07 * 12)
+        self.salt_info[5]["a"].append(4.75 * d_s)
+        self.salt_info[5]["b"].append(4.75 * d_s)
+        self.salt_info[5]["rad"].append(self.sun_rad // 81)
+        self.salt_info[5]["pos"].append(random.randint(0, 1000))
+        self.salt_info[5]["img"].append(
+            pg.image.load("img/kallisto.gif").convert_alpha())
+        #
+        # for k in range(75):
+        #     """Kallisto"""
+        #     r = random.randint(20, 50) / 10
+        #     self.salt_info[5]["speed"].append(8.2 / 13.07 * 12)
+        #     self.salt_info[5]["a"].append(r * d_s)
+        #     self.salt_info[5]["b"].append(
+        #         (r + random.randint(1, 5) / 10) * d_s)
+        #     self.salt_info[5]["rad"].append(0)
+        #     self.salt_info[5]["pos"].append(random.randint(0, 1000))
+        #     self.salt_info[5]["img"].append(
+        #         pg.image.load("img/kallisto.gif").convert_alpha())
+
+        """Saturn"""
+        """Japet"""
+        self.salt_info[6]["speed"].append(2.9 / 9.69 * 29)
+        self.salt_info[6]["a"].append(8.75 * d_s)
+        self.salt_info[6]["b"].append(8.75 * d_s)
+        self.salt_info[6]["rad"].append(self.sun_rad // 260)
+        self.salt_info[6]["pos"].append(random.randint(0, 1000))
+        self.salt_info[6]["img"].append(
+            pg.image.load("img/japet.png").convert_alpha())
+
+        """Rea"""
+        self.salt_info[6]["speed"].append(6.75 / 9.69 * 29)
+        self.salt_info[6]["a"].append(1.3 * d_s)
+        self.salt_info[6]["b"].append(1.3 * d_s)
+        self.salt_info[6]["rad"].append(self.sun_rad // 75)
+        self.salt_info[6]["pos"].append(random.randint(0, 1000))
+        self.salt_info[6]["img"].append(
+            pg.image.load("img/rea.jpg").convert_alpha())
+
+        """Titan"""
+        self.salt_info[6]["speed"].append(1.6 / 9.69 * 29)
+        self.salt_info[6]["a"].append(3 * d_s)
+        self.salt_info[6]["b"].append(3 * d_s)
+        self.salt_info[6]["rad"].append(self.sun_rad // 74)
+        self.salt_info[6]["pos"].append(random.randint(0, 1000))
+        self.salt_info[6]["img"].append(
+            pg.image.load("img/titan.png").convert_alpha())
+        #
+        # for k in range(1500):
+        #     """Titan"""
+        #     r = random.randint(25, 100) / 100
+        #     self.salt_info[6]["speed"].append(17 / 9.69 * 29)
+        #     self.salt_info[6]["a"].append(
+        #         (r + random.randint(1, 9) / 10) * d_s)
+        #     self.salt_info[6]["b"].append(r * d_s)
+        #     self.salt_info[6]["rad"].append(0)
+        #     self.salt_info[6]["pos"].append(random.randint(0, 1000))
+        #     self.salt_info[6]["img"].append(
+        #         pg.image.load("img/titan.png").convert_alpha())
+
+        """Uranus"""
+        """Titania"""
+        self.salt_info[7]["speed"].append(3.3 / 6.8 * 84)
+        self.salt_info[7]["a"].append(d_s)
+        self.salt_info[7]["b"].append(d_s)
+        self.salt_info[7]["rad"].append(self.sun_rad // 250)
+        self.salt_info[7]["pos"].append(random.randint(0, 1000))
+        self.salt_info[7]["img"].append(
+            pg.image.load("img/titania.png").convert_alpha())
+
+        """Oberton"""
+        self.salt_info[7]["speed"].append(2 / 6.8 * 84)
+        self.salt_info[7]["a"].append(1.45 * d_s)
+        self.salt_info[7]["b"].append(1.45 * d_s)
+        self.salt_info[7]["rad"].append(self.sun_rad // 260)
+        self.salt_info[7]["pos"].append(random.randint(0, 1000))
+        self.salt_info[7]["img"].append(
+            pg.image.load("img/oberon.jpg").convert_alpha())
+
+        """Neptune"""
+        """Triron"""
+        self.salt_info[8]["speed"].append(4.7 / 5.5 * 165)
+        self.salt_info[8]["a"].append(1.45 * d_s)
+        self.salt_info[8]["b"].append(1.45 * d_s)
+        self.salt_info[8]["rad"].append(self.sun_rad // 152)
+        self.salt_info[8]["pos"].append(random.randint(0, 1000))
+        self.salt_info[8]["img"].append(
+            pg.image.load("img/triton.png").convert_alpha())
+
+        print(self.planets_speed)

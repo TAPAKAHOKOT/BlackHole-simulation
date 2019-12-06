@@ -37,6 +37,8 @@ def run_game():
     width = infoObject.current_w
     height = infoObject.current_h
 
+    settings = Settings(width, height)
+
     clock = pg.time.Clock()
 
     print('Screen size: ' + str(width) + 'x' + str(height))
@@ -44,8 +46,12 @@ def run_game():
     screen = pg.display.set_mode((width,
                                   height), DOUBLEBUF | FULLSCREEN)
     # screen = pg.display.set_mode((width//2, height//2))
+
+    for k in range(len(settings.planets_img)):
+        settings.planets_img[k].convert_alpha()
+
     screen.set_alpha(None)
-    settings = Settings(width, height)
+
     screen.convert_alpha()
 
     # Создание двух силей написания текста, для заголовка и обычного текста

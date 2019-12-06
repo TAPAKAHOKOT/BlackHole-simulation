@@ -279,7 +279,7 @@ class Dot():
                                       settings.screen_width * self.gravity_coef_x)
             self.proj_dot_rad_y = abs(self.y -
                                       settings.screen_height * self.gravity_coef_y)
-
+            #
             self.radius_dot_dist = m.sqrt(self.proj_dot_x * self.proj_dot_x +
                                           self.proj_dot_y * self.proj_dot_y)
             self.change_speed(settings)
