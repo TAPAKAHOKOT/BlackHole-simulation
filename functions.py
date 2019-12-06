@@ -17,7 +17,7 @@ def screen_update(screen, settings, clock):
     object_dot = []
 
     # Заливка экрана черным фоном
-    screen.fill((0, 0, 0))
+    screen.fill((0, 0, 3))
 
     create_lang_changer(screen, settings)
 
