@@ -205,6 +205,7 @@ class Settings():
         self.slider_x1 = int(self.screen_width // 2 - 5)
         self.slider_y1 = int(self.screen_height - 50)
         self.slider_hold = False
+        self.move_slider_hold = False
 
         self.size_slider_y = self.screen_height // 2
         self.size_slider_x = self.screen_width - 40

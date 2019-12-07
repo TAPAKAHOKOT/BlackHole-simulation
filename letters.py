@@ -1,3 +1,6 @@
+from prettytable import PrettyTable
+import re
+from itertools import chain
 
 """
 # IT WAS THE SECOND TRY/////////////////////////////////////////////////////////
@@ -66,15 +69,15 @@ print(' Num of letters: ' + str(num))
 """
 
 
-from prettytable import PrettyTable
-from itertools import chain
+letters, word = {}, (open('text.txt', 'r')).read().replace('\n', ' ').lower()        # Создание словаря и запись текста из файла в переменную
 
-letters,word= {},(open('text.txt', 'r')).read().replace('\n',' ').lower()          # Создание словаря и запись текста из файла в переменную
-for k in chain(range(33, 127), range(1040, 1104)): letters[chr(k)] = 0             # Цикл добавления всех нужных символов в словарь
-for k in letters.keys(): letters[k] = word.count(k)                                # Подсчет кол-ва всех символов в тексте
-num, table = sum(letters.values()), PrettyTable()                                  # Создание переменных кол-ва символов и таблицы для красивого вывода результатов
-for k in range(1, 11):                                                             # Цикл перебора первых 10 букв по встречаемости (я гнался за минимальным размером проги)
-    val, key = list(letters.values()), list(letters.keys())                        # создание списков ключей и значений основного словаря
-    high, index = letters.pop(key[val.index(max(val))]), val.index(max(val))       # Создание переменных индексом самого встречаемого символа и кол-ва этого символа в тексте
-    table.add_row([k,key[index]+' - '+str(high),str(round(high/num*100,2))+'%'])   # Добавление строки в таблицу для вывода с 3-мы столбцами и всеми нужными данными
-print(table,'\n Words num: ',len(word.split(' ')),'\n Letters num: ', num)         # Вывод таблицы с результатами, кол-ва слов и кол-ва букв в тексте
+for k in chain(range(33, 127), range(1040, 1104)):    # Цикл добавления всех нужных символов в словарь
+    letters[chr(k)] = 0
+for k in letters.keys():    # Подсчет кол-ва всех символов в тексте
+    letters[k] = word.count(k)
+num, table = sum(letters.values()), PrettyTable()     # Создание переменных кол-ва символов и таблицы для красивого вывода результатов
+for k in range(1, 11):      # Цикл перебора первых 10 букв по встречаемости (я гнался за минимальным размером проги)
+    val, key = list(letters.values()), list(letters.keys())    # создание списков ключей и значений основного словаря
+    high, index = letters.pop(key[val.index(max(val))]), val.index(max(val))    # Создание переменных индексом самого встречаемого символа и кол-ва этого символа в тексте
+    table.add_row([k, key[index] + ' - ' + str(high), str(round(high / num * 100, 2)) + '%'])    # Добавление строки в таблицу для вывода с 3-мы столбцами и всеми нужными данными
+print("{}\n\t{} - words \n\t{} - letters".format(table, len(re.findall("[a-z]+", word)), len(word.replace(" ", ""))))

@@ -80,6 +80,9 @@ def solar_system_mode(screen, settings):
         settings.object_planets[settings.follow_koef].y_cor
     update_planets_cors(screen, settings)
 
+    if settings.red_border:
+        list(map(lambda i: i.draw_planets(), settings.object_planets))
+
     # Создает поле с текстом при достаточном приближении к планете
     if settings.frame:
         create_frame(screen, settings)
@@ -180,6 +183,16 @@ def draw_hint(screen, settings):
 
 
 def using_sliders(screen, settings):
+    if settings.move_slider_hold:
+        m_pos = pg.mouse.get_pos()[0]
+
+        if m_pos > settings.screen_width // 1.5:
+            m_pos = settings.screen_width // 1.5
+        elif m_pos < settings.screen_width // 3:
+            m_pos = settings.screen_width // 3
+
+        settings.slider_x1 = m_pos
+
     if settings.slider_hold:
         m_pos = pg.mouse.get_pos()[0]
 
@@ -232,7 +245,7 @@ def using_sliders(screen, settings):
 
     else:
         settings.size_slider_y = (settings.size_koef +
-                                  settings.screen_height // 1.5 * step - 0.015) / (step)
+                                  settings.screen_height // 1.5 * step - 0.015) / step
 
 
 """Инициализация всех точек при черной дыре"""
@@ -681,7 +694,7 @@ def create_frame(screen, settings):
     left_surf = pg.Surface((settings.screen_width // 6 + 30,
                             settings.screen_height - settings.screen_height // 4))
 
-    left_surf.fill((20, 20, 20))
+    left_surf.fill((20, 20, 10))
     left_surf.set_alpha(50)
     text_title = settings.title.render(text[0], True, (255, 255, 255))
 
@@ -935,22 +948,27 @@ def check_mouse_events(screen, settings, event):
     """Правая кнопка мыши"""
     if event.button == 3:
         if settings.click == -1:
-            if settings.size_koef >= settings.max_size_koef:
-                check = True
+
+            if settings.slider_x1 - 55 < pg.mouse.get_pos()[0] < settings.slider_x1 + 65\
+                    and settings.slider_y1 - 10 < pg.mouse.get_pos()[1] < settings.slider_y1 + 30:
+                settings.move_slider_hold = True
             else:
-                check = False
-            settings.object_planets[settings.follow_koef].planet_img\
-                = pg.transform.scale(settings.planets_img[settings.follow_koef], (2, 2))
-            settings.follow_koef += 1
+                if settings.size_koef >= settings.max_size_koef:
+                    check = True
+                else:
+                    check = False
+                settings.object_planets[settings.follow_koef].planet_img\
+                    = pg.transform.scale(settings.planets_img[settings.follow_koef], (2, 2))
+                settings.follow_koef += 1
 
-            if settings.follow_koef > 8:
-                settings.follow_koef = 0
+                if settings.follow_koef > 8:
+                    settings.follow_koef = 0
 
-            settings.max_size_koef =\
-                settings.max_size_koef_arr[settings.follow_koef]
+                settings.max_size_koef =\
+                    settings.max_size_koef_arr[settings.follow_koef]
 
-            if settings.size_koef > settings.max_size_koef or check == True:
-                settings.size_koef = settings.max_size_koef
+                if settings.size_koef > settings.max_size_koef or check == True:
+                    settings.size_koef = settings.max_size_koef
 
             # update_planets_size(screen, settings, settings.follow_koef)
 
@@ -1223,6 +1241,10 @@ def check_events(screen, settings):
                 settings.slider_hold = False
                 settings.size_slider_y_hold = False
                 settings.zoom_event = False
+
+            """Отжата правая кнопка мыши"""
+            if event.button == 3:
+                settings.move_slider_hold = False
 
             """Отжато колесико"""
             if event.button == 2:

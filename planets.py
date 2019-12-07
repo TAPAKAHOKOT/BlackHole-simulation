@@ -91,14 +91,30 @@ class Planets():
                 self.im = pg.transform.scale(
                     self.salt_img[k], (int(self.rad_t * 4), int(self.rad_t * 4)))
 
-                if self.salt_rad[k] != 0:
-                    self.screen.blit(self.im, (self.x_t, self.y_t))
+                if self.settings.red_border:
+                    self.line = pg.draw.line(self.screen, (0, 200, 0),
+                                             [self.x_t + self.rad_t * 2,
+                                              self.y_t + self.rad_t * 2],
+                                             [self.x + self.settings.planets_rad[self.i]
+                                              // 2 * self.settings.size_koef,
+                                              self.y +
+                                              self.settings.planets_rad[self.i]
+                                              // 2 * self.settings.size_koef])
+                    self.rect = pg.draw.rect(
+                        self.screen, (255, 0, 0), (self.x_t, self.y_t,
+                                                   self.rad_t * 4,
+                                                   self.rad_t * 4), 1)
                 else:
-                    if self.settings.size_koef > 0.12:
-                        pg.draw.circle(self.screen, (255, 250, 255),
-                                       (self.x_t, self.y_t), 0)
-        self.planet = self.screen.blit(
-            self.planet_img, (self.x, self.y))
+                    if self.salt_rad[k] != 0:
+                        self.screen.blit(self.im, (self.x_t, self.y_t))
+                    else:
+                        if self.settings.size_koef > 0.12:
+                            pg.draw.circle(self.screen, (255, 250, 255),
+                                           (self.x_t, self.y_t), 0)
+
+        if not self.settings.red_border:
+            self.planet = self.screen.blit(
+                self.planet_img, (self.x, self.y))
 
     # def update_lines(self):
     #     self.line = pg.draw.line(self.screen, (50, 50, 50),
@@ -130,13 +146,24 @@ class Planets():
 
         # Отображение линий к центру в режиме разработчика
         if self.settings.red_border:
+            self.rect = pg.draw.rect(
+                self.screen, (255, 0, 0), (self.x, self.y,
+                                           self.settings.planets_rad[self.i]
+                                           * self.settings.size_koef,
+                                           self.settings.planets_rad[self.i]
+                                           * self.settings.size_koef), 1)
             self.line = pg.draw.line(self.screen, (0, 200, 0),
                                      [self.x + self.settings.planets_rad[self.i]
                                       // 2 * self.settings.size_koef,
                                       self.y +
                                       self.settings.planets_rad[self.i]
                                       // 2 * self.settings.size_koef],
-                                     [self.settings.middle[0], self.settings.middle[1]])
+                                     [self.settings.object_planets[0].x +
+                                      self.settings.planets_rad[0]
+                                      // 2 * self.settings.size_koef,
+                                      self.settings.object_planets[0].y +
+                                      self.settings.planets_rad[0]
+                                      // 2 * self.settings.size_koef])
 
     """Функция обновления положения планет"""
 

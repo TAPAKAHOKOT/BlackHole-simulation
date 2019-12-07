@@ -133,6 +133,8 @@ class Dot():
         self.dot_speed_whole -= speed
 
         if self.y >= settings.gravity_point_y:
+            if self.radius_dot_dist == 0:
+                self.radius_dot_dist = 0.00001
             self.tilt = m.acos(self.proj_2_dot_x / (self.radius_dot_dist))\
                 - m.radians(self.tors_speed * mooving_arround_speed)
 
