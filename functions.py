@@ -1334,17 +1334,16 @@ def check_events(screen, settings):
                     settings.size_koef = settings.max_size_koef
                 # update_planets_size(screen, settings, settings.follow_koef)
 
-                keys = pg.key.get_pressed()
+            keys = pg.key.get_pressed()
 
-                if keys[pg.K_b] and keys[pg.K_r] and keys[pg.K_d]\
-                        and keys[pg.K_LALT]:
-                    if settings.red_border:
-                        settings.red_border = False
-                        # update_planets_size(screen, settings, 'all')
-
-                    else:
-                        settings.red_border = True
-                        # update_planets_size(screen, settings, 'all')
+            if keys[pg.K_b] and keys[pg.K_r] and keys[pg.K_d]\
+                    and keys[pg.K_LALT]:
+                if settings.red_border:
+                    settings.red_border = False
+                    # update_planets_size(screen, settings, 'all')
+                else:
+                    settings.red_border = True
+                    # update_planets_size(screen, settings, 'all')
 
             """Проверка для выхода из проги"""
             if event.key == pg.K_ESCAPE:

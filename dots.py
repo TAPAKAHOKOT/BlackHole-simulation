@@ -114,6 +114,13 @@ class Dot():
             self.arr[k] = self.pos
 
     def draw_dot(self):
+        if self.settings.red_border:
+            r = 255 * (self.speed_x + self.speed_y) / \
+                (self.settings.min_speed - self.settings.max_speed * 4) * 4
+            g = r // 2
+            b = 10
+            if r > 155:
+                r = 155
 
         # if self.last_pos != self.pos:
         if self.move_koef:
@@ -122,12 +129,37 @@ class Dot():
                 #     break
                 if k % self.tors_intensive == 0:
                     if k != 0:
+                        if self.settings.red_border:
+                            d = 255 * (self.speed_x + self.speed_y) / \
+                                (self.settings.min_speed -
+                                 self.settings.max_speed * 4) * 10
+                            if d > 155:
+                                d = 155
+                            d += 100
+
+                            d = 255 - d
+                            c = (
+                                (100 + r) * (1 + k) / (1 + self.tors_size),
+                                d * ((1 + k) / (1 + self.tors_size)),
+                                0)
+                        else:
+                            c = (self.color[0] * ((1 + k) / (1 + self.tors_size)),
+                                 self.color[1] *
+                                 ((1 + k) / (1 + self.tors_size)),
+                                 self.color[2] * ((1 + k) / (1 + self.tors_size)))
+
                         self.all_dots = pg.draw.circle(self.screen,
-                                                       self.color, self.arr[k], 0)
+                                                       c, self.arr[k], 0)
                     else:
+
                         self.last_dot = pg.draw.circle(self.screen,
                                                        (0, 0, 0), self.arr[k], 1)
-        self.rect = pg.draw.circle(self.screen, self.color, self.pos, self.rad)
+        if self.settings.red_border:
+            self.rect = pg.draw.circle(
+                self.screen, (100 + r, g, b), self.pos, self.rad)
+        else:
+            self.rect = pg.draw.circle(
+                self.screen, self.color, self.pos, self.rad)
 
     def moving(self, settings, speed, mooving_arround_speed=2):
         self.dot_speed_whole -= speed
