@@ -36,10 +36,10 @@ use file Space.exe to run it
 """ HOT KEYS """
 
 *>>>* LKM to move black hole  
-*>>>* RKM to recreate stars and put black hole on the starting position 
-*>>>* Scroll up to speed up 
-*>>>* Scroll down to speed down 
-*>>>* To enable developer mode press keys ALT - B - R - D 
+*>>>* RKM to recreate stars and put black hole on the starting position  
+*>>>* Scroll up to speed up  
+*>>>* Scroll down to speed down  
+*>>>* To enable developer mode press keys ALT - B - R - D  
 
 
 *>>>* Режим солнечной системы:
@@ -56,8 +56,8 @@ use file Space.exe to run it
 Используйте скролл в нижней части экрана для перемоки времени
 
 """ HOT KEYS """
-*>>>* Press LKM on a planet to select it
-*>>>* Press RKM to view planets in order
-*>>>* Scroll up/down to zoom on/out
-*>>>* To enable developer mode press keys ALT - B - R - D
-*>>>* 0 - 8 to select planet by serial number (0 - The Sun)
+*>>>* Press LKM on a planet to select it  
+*>>>* Press RKM to view planets in order  
+*>>>* Scroll up/down to zoom on/out  
+*>>>* To enable developer mode press keys ALT - B - R - D  
+*>>>* 0 - 8 to select planet by serial number (0 - The Sun)  
