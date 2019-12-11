@@ -33,7 +33,7 @@ use file Space.exe to run it
 
 Нажав на правую кнопку мыши вы можете обновить экран, пересоздав все звезды и поместив черную дыру в начаьные координаты
 
-###""" HOT KEYS """  
+### """ HOT KEYS """  
 
 *>>>* LKM to move black hole  
 *>>>* RKM to recreate stars and put black hole on the starting position  
