@@ -3,12 +3,12 @@
 If you want to test test this project, you need to download only Black Hole x32 folder and
 use file Space.exe to run it
 
-* Что и как включать
+*>>>* Что и как включать
 
 Для запуска программы выберите приложение Space.exe
 После запуска откроется окно с симуляцией черной дыры, управлять которой можно перемещением мышки с зажатой левой клавишей мыши.
 
-* Общие функции
+*>>>* Общие функции
 
 В левом нижнем углу расположен счетчик кадров в секунду (Fraps per second)
 
@@ -22,7 +22,7 @@ use file Space.exe to run it
 Для закрытия приложения достаточно нажать esc.
 
 
-* Режим черной дыры:
+*>>>* Режим черной дыры:
 
 В правом верхнем углу настройки количества звезд в симуляции
 Просто нажмите на нужное количество и программа сразу применит эту настройку
@@ -36,13 +36,13 @@ use file Space.exe to run it
 """ HOT KEYS """
 
 *>>>* LKM to move black hole
-* RKM to recreate stars and put black hole on the starting position 
-* Scroll up to speed up 
-* Scroll down to speed down 
-* To enable developer mode press keys ALT - B - R - D 
+*>>>* RKM to recreate stars and put black hole on the starting position 
+*>>>* Scroll up to speed up 
+*>>>* Scroll down to speed down 
+*>>>* To enable developer mode press keys ALT - B - R - D 
 
 
-Режим солнечной системы:
+*>>>* Режим солнечной системы:
 
 Для зума используйте колесико мыши или скролл в правой части экрана
 
@@ -56,8 +56,8 @@ use file Space.exe to run it
 Используйте скролл в нижней части экрана для перемоки времени
 
 """ HOT KEYS """
->>>* Press LKM on a planet to select it
->>> Press RKM to view planets in order
->>> Scroll up/down to zoom on/out
->>> To enable developer mode press keys ALT - B - R - D
->>> 0 - 8 to select planet by serial number (0 - The Sun)
+*>>>* Press LKM on a planet to select it
+*>>>* Press RKM to view planets in order
+*>>>* Scroll up/down to zoom on/out
+*>>>* To enable developer mode press keys ALT - B - R - D
+*>>>* 0 - 8 to select planet by serial number (0 - The Sun)
