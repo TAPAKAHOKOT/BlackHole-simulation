@@ -35,7 +35,7 @@ use file Space.exe to run it
 
 """ HOT KEYS """
 
-«>>>» LKM to move black hole
+'>>>' LKM to move black hole
 * RKM to recreate stars and put black hole on the starting position 
 * Scroll up to speed up 
 * Scroll down to speed down 
