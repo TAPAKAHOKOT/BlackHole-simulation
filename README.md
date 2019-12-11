@@ -3,12 +3,12 @@
 If you want to test test this project, you need to download only Black Hole x32 folder and
 use file Space.exe to run it
 
-/>>> Что и как включать
+> Что и как включать
 
 Для запуска программы выберите приложение Space.exe
 После запуска откроется окно с симуляцией черной дыры, управлять которой можно перемещением мышки с зажатой левой клавишей мыши.
 
->>> Общие функции
+< Общие функции >
 
 В левом нижнем углу расположен счетчик кадров в секунду (Fraps per second)
 
@@ -33,13 +33,13 @@ use file Space.exe to run it
 
 Нажав на правую кнопку мыши вы можете обновить экран, пересоздав все звезды и поместив черную дыру в начаьные координаты
 
-""" HOT KEYS """"
+> HOT KEYS
 
->>> LKM to move black hole
->>> RKM to recreate stars and put black hole on the starting position
->>> Scroll up to speed up
->>> Scroll down to speed down
->>> To enable developer mode press keys ALT - B - R - D
+< LKM to move black hole >
+< RKM to recreate stars and put black hole on the starting position >
+< Scroll up to speed up >
+< Scroll down to speed down >
+< To enable developer mode press keys ALT - B - R - D >
 
 
 Режим солнечной системы:
