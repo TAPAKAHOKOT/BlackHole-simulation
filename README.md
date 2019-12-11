@@ -33,13 +33,13 @@ use file Space.exe to run it
 
 Нажав на правую кнопку мыши вы можете обновить экран, пересоздав все звезды и поместив черную дыру в начаьные координаты
 
-* HOT KEYS
+""" HOT KEYS """
 
 * LKM to move black hole
-* RKM to recreate stars and put black hole on the starting position >
-* Scroll up to speed up >
-* Scroll down to speed down >
-* To enable developer mode press keys ALT - B - R - D >
+* RKM to recreate stars and put black hole on the starting position 
+* Scroll up to speed up 
+* Scroll down to speed down 
+* To enable developer mode press keys ALT - B - R - D 
 
 
 Режим солнечной системы:
@@ -56,7 +56,7 @@ use file Space.exe to run it
 Используйте скролл в нижней части экрана для перемоки времени
 
 """ HOT KEYS """
->>> Press LKM on a planet to select it
+>>>* Press LKM on a planet to select it
 >>> Press RKM to view planets in order
 >>> Scroll up/down to zoom on/out
 >>> To enable developer mode press keys ALT - B - R - D
