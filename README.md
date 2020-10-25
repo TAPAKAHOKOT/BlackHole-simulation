@@ -3,12 +3,15 @@
 If you want to test test this project, you need to download only Black Hole x32 folder and
 use file Space.exe to run it
 
+
 ## Что и как включать
 
 Для запуска программы выберите приложение Space.exe
 После запуска откроется окно с симуляцией черной дыры, управлять которой можно перемещением мышки с зажатой левой клавишей мыши.
 
 ## Общие функции
+
+![Screenshot](video3.gif)
 
 В левом нижнем углу расположен счетчик кадров в секунду (Fraps per second)
 
